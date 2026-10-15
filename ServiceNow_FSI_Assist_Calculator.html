@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiceNow FSI Assist Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#032D42; --navy2:#0d2337; --navy3:#06405c;
+    --blue:#0070d2; --blue-d:#0a4d8c; --blue-lt:#e8f3fc;
+    --red:#e0182d; --red-d:#b3121f; --red-lt:#fdecee; --red-bd:#f6b8bf;
+    --green:#63DF4E; --green-d:#1b9e3e; --green-lt:#ecfdf0;
+    --teal:#00c7b1; --teal-d:#009d8e; --teal-lt:#e6faf8; --teal-bd:#99e9e0;
+    --purple:#7c3aed; --purple-d:#5b21b6; --purple-lt:#f3eeff; --purple-bd:#c4b5fd;
+    --amber:#d97706; --amber-lt:#fff7ed; --amber-bd:#fcd38a;
+    --ink:#0d2337; --body:#3a4f60; --muted:#6b7f8c; --faint:#9fb3bf;
+    --bg:#fff; --soft:#f4f7f9; --soft2:#eef3f6; --border:#dce8ef; --border2:#eef3f6;
+    --shadow-sm:0 1px 3px rgba(13,35,55,.08),0 1px 2px rgba(13,35,55,.04);
+    --shadow-md:0 4px 16px rgba(13,35,55,.1),0 2px 6px rgba(13,35,55,.06);
+    --r:12px; --r-sm:8px; --r-xs:6px;
+    --font:'Source Sans 3',system-ui,sans-serif; --serif:'Source Serif 4',Georgia,serif;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:clamp(13px,1.02vw,16px);scroll-behavior:smooth}
+  body{font-family:var(--font);background:var(--soft);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1500px;margin:0 auto;padding:0 clamp(14px,3vw,40px)}
+  .top{background:var(--navy);padding:clamp(11px,1.4vw,16px) clamp(16px,3vw,40px);display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.25)}
+  .top-l{display:flex;align-items:center;gap:clamp(9px,1vw,16px)}
+  .sn-logo{height:clamp(18px,1.9vw,24px);width:auto}
+  .div{width:1px;height:clamp(15px,1.6vw,22px);background:rgba(255,255,255,.2)}
+  .top-app{font-size:clamp(11px,.92vw,14px);font-weight:700;color:#fff;letter-spacing:.2px}
+  .top-app b{color:var(--green)}
+  .live{display:flex;align-items:center;gap:6px;background:rgba(0,199,177,.15);border:1px solid rgba(0,199,177,.32);border-radius:100px;padding:5px 13px;font-size:clamp(9px,.74vw,12px);font-weight:700;color:var(--teal);white-space:nowrap}
+  .pulse{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,199,177,.6)}70%{box-shadow:0 0 0 7px rgba(0,199,177,0)}100%{box-shadow:0 0 0 0 rgba(0,199,177,0)}}
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 70%);padding:clamp(22px,3vw,42px) 0 clamp(26px,3.4vw,48px);position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;right:-6%;top:-30%;width:clamp(280px,38vw,560px);height:clamp(280px,38vw,560px);background:radial-gradient(circle,rgba(0,199,177,.09) 0%,transparent 64%);pointer-events:none}
+  .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--red) 0%,var(--blue) 38%,var(--teal) 70%,var(--green) 100%)}
+  .eyebrow{font-size:clamp(9px,.74vw,11px);font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+  .hero h1{font-family:var(--serif);font-weight:700;font-size:clamp(24px,3.1vw,42px);color:#fff;line-height:1.05;margin-bottom:10px}
+  .hero h1 .ac{color:var(--green)}
+  .hero p{font-size:clamp(12px,1vw,15px);color:rgba(255,255,255,.78);font-weight:300;max-width:62ch;line-height:1.55}
+  .hero .stagepill{display:inline-flex;align-items:center;gap:7px;margin-top:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:600;color:#fff}
+  .hero .stagepill b{color:var(--green)}
+  .panel{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:clamp(14px,1.6vw,22px)}
+  .p-title{font-size:clamp(13px,1.05vw,16px);font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px}
+  .p-sub{font-size:clamp(10px,.8vw,12px);color:var(--muted);margin-top:3px;font-weight:400;line-height:1.4}
+  .lab{font-size:clamp(9px,.72vw,11px);font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}
+  .grid-ctrl{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(12px,1.4vw,18px);margin-top:-clamp(14px,1.8vw,26px);position:relative;z-index:5}
+  @media(max-width:920px){.grid-ctrl{grid-template-columns:1fr}}
+  select,input[type=number]{width:100%;font-family:var(--font);font-size:13px;font-weight:600;color:var(--navy);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-xs);padding:9px 10px;outline:none;transition:border .15s}
+  select:focus,input[type=number]:focus{border-color:var(--blue)}
+  select:disabled{background:var(--soft2);color:var(--muted);cursor:not-allowed}
+  input:disabled{background:var(--soft2);color:var(--muted)}
+  select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230070d2' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+  .sel-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  @media(max-width:620px){.sel-row{grid-template-columns:1fr}}
+  .seg{display:inline-flex;background:var(--soft2);border:1px solid var(--border);border-radius:100px;padding:3px;gap:2px}
+  .seg button{border:none;background:transparent;font-family:var(--font);font-size:11px;font-weight:700;color:var(--muted);padding:5px 13px;border-radius:100px;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .seg button.on{background:var(--blue);color:#fff;box-shadow:0 1px 4px rgba(0,112,210,.4)}
+  .seg.teal button.on{background:var(--teal-d)}
+  .mini{width:78px!important;text-align:center;padding:7px 6px!important;font-size:12px!important}
+  .pct-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .field{margin-bottom:12px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.2vw,16px);margin:clamp(16px,2vw,26px) 0}
+  @media(max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--bg);border-radius:var(--r);padding:clamp(13px,1.5vw,20px);border-left:4px solid var(--blue);box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+  .kpi.k-total{border-left-color:var(--navy);background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%)}
+  .kpi.k-genai{border-left-color:var(--teal)} .kpi.k-agentic{border-left-color:var(--purple)} .kpi.k-case{border-left-color:var(--green-d)}
+  .kpi .kl{font-size:clamp(9px,.72vw,11px);font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .kpi.k-total .kl{color:rgba(255,255,255,.7)}
+  .kpi .kv{font-family:var(--serif);font-size:clamp(22px,2.6vw,38px);font-weight:700;color:var(--navy);line-height:1.05;margin-top:5px}
+  .kpi.k-total .kv{color:#fff}.kpi.k-genai .kv{color:var(--teal-d)}.kpi.k-agentic .kv{color:var(--purple)}.kpi.k-case .kv{color:var(--green-d)}
+  .kpi .kd{font-size:clamp(9px,.74vw,11px);color:var(--muted);margin-top:4px;font-weight:500}
+  .kpi.k-total .kd{color:rgba(255,255,255,.6)}
+  .tabbar{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap}
+  .tab{border:none;background:transparent;font-family:var(--font);font-size:clamp(11px,.92vw,14px);font-weight:700;color:var(--muted);padding:11px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;border-radius:6px 6px 0 0}
+  .tab:hover:not(.on){background:var(--soft);color:var(--navy)}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:clamp(9px,.72vw,11px);font-weight:700;border-radius:5px;padding:2px 8px;white-space:nowrap}
+  .b-genai{background:var(--teal-lt);border:1px solid var(--teal-bd);color:var(--teal-d)}
+  .b-agentic{background:var(--purple-lt);border:1px solid var(--purple-bd);color:var(--purple)}
+  .b-human{background:var(--red-lt);border:1px solid var(--red-bd);color:var(--red-d)}
+  .b-system{background:var(--soft2);border:1px solid var(--border);color:var(--muted)}
+  .b-act{background:var(--blue-lt);border:1px solid #bcdef7;color:var(--blue-d)}
+  .b-prov{background:var(--amber-lt);border:1px solid var(--amber-bd);color:var(--amber)}
+  .b-star{background:var(--green-lt);border:1px solid #b6f0c0;color:var(--green-d)}
+  .tierwrap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  @media(max-width:780px){.tierwrap{grid-template-columns:1fr}}
+  .tier{border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px;background:var(--bg)}
+  .tier.t-S{border-top:4px solid var(--green-d)} .tier.t-M{border-top:4px solid var(--amber)} .tier.t-C{border-top:4px solid var(--red)}
+  .tier h4{font-size:13px;font-weight:800;color:var(--navy);display:flex;justify-content:space-between;align-items:center}
+  .tier .mix{font-size:10px;color:var(--muted);font-weight:600}
+  .tier .pcrow{display:flex;justify-content:space-between;font-size:11.5px;padding:5px 0;border-bottom:1px dashed var(--border2)}
+  .tier .pcrow b{font-family:var(--serif);font-weight:700}
+  .tier .pc-g b{color:var(--teal-d)}.tier .pc-a b{color:var(--purple)}.tier .pc-bl b{color:var(--navy)}
+  .tier .pc-bl{border-bottom:none;margin-top:4px;padding-top:8px;border-top:1.5px solid var(--border)}
+  table.steps{width:100%;border-collapse:collapse;font-size:clamp(10px,.82vw,12.5px)}
+  table.steps th{text-align:left;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:8px 8px;border-bottom:2px solid var(--border);background:var(--soft)}
+  table.steps th.c,table.steps td.c{text-align:center}
+  table.steps th.r,table.steps td.r{text-align:right}
+  table.steps td{padding:8px;border-bottom:1px solid var(--border2);color:var(--body);vertical-align:top}
+  table.steps tr.stage-h td{background:var(--navy);color:#fff;font-weight:800;font-size:11px;letter-spacing:.4px;padding:7px 10px}
+  table.steps tr.grp-h td{background:var(--blue-lt);color:var(--blue-d);font-weight:800;font-size:11px;padding:6px 10px}
+  table.steps tr.tot td{background:var(--navy);color:#fff;font-weight:800}
+  table.steps tr.tot td .asst{color:var(--green)}
+  table.steps .sn{font-weight:600;color:var(--ink)}
+  table.steps tr:hover td{background:var(--soft)}
+  table.steps tr.stage-h:hover td,table.steps tr.grp-h:hover td,table.steps tr.tot:hover td{background:inherit}
+  .tier-dots{display:inline-flex;gap:3px}
+  .dot{width:15px;height:15px;border-radius:4px;font-size:8.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;color:#fff}
+  .dot.on-S{background:var(--green-d)}.dot.on-M{background:var(--amber)}.dot.on-C{background:var(--red)}
+  .dot.off{background:var(--soft2);color:var(--faint)}
+  .asst{font-family:var(--serif);font-weight:700;color:var(--navy)}
+  .vol-in{width:92px!important;text-align:right;padding:5px 7px!important;font-size:12px!important}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;font-size:11px;font-weight:600;color:var(--body)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .lg-sw{width:13px;height:13px;border-radius:4px;display:inline-block}
+  .flow-stage{margin-bottom:14px;border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden}
+  .fs-head{background:linear-gradient(90deg,var(--navy),var(--navy3));color:#fff;padding:9px 14px;font-weight:800;font-size:12.5px;display:flex;align-items:center;gap:8px}
+  .fs-head .num{background:rgba(255,255,255,.16);width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+  .fs-body{padding:12px;display:flex;flex-wrap:wrap;gap:10px}
+  .step{flex:1 1 220px;min-width:200px;border-radius:var(--r-xs);padding:10px 12px;border:1.5px solid;position:relative}
+  .step.m-genai{background:var(--teal-lt);border-color:var(--teal-bd)}
+  .step.m-agentic{background:var(--purple-lt);border-color:var(--purple-bd)}
+  .step.m-human{background:var(--red-lt);border-color:var(--red-bd)}
+  .step.m-system{background:var(--soft);border-color:var(--border)}
+  .step .st-n{font-weight:700;font-size:12px;color:var(--ink);line-height:1.3;margin-bottom:6px;padding-right:34px}
+  .step .st-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .step .st-as{position:absolute;top:9px;right:10px;font-family:var(--serif);font-weight:700;font-size:13px}
+  .step.m-genai .st-as{color:var(--teal-d)}.step.m-agentic .st-as{color:var(--purple)}
+  .step.m-human .st-as,.step.m-system .st-as{color:var(--faint);font-size:10px;font-weight:600}
+  .arrow{align-self:center;color:var(--faint);font-size:16px;font-weight:700}
+  .agentic-band{margin-top:10px;border:1.5px dashed var(--purple-bd);background:var(--purple-lt);border-radius:var(--r-sm);padding:12px 14px;font-size:12px;line-height:1.5}
+  .agentic-band b{color:var(--purple-d)}
+  .idx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+  .idx-card{border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;background:var(--bg);cursor:pointer;transition:all .15s}
+  .idx-card:hover{border-color:var(--blue);box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .idx-card .ic-n{font-weight:800;font-size:12.5px;color:var(--navy);margin-bottom:6px}
+  .idx-card .ic-m{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-top:8px}
+  .bar-row{display:grid;grid-template-columns:minmax(120px,1.4fr) 1fr 88px;gap:12px;align-items:center;margin-bottom:9px;font-size:12px}
+  .bar-row .bn{font-weight:700;color:var(--navy);font-size:11.5px}
+  .bar-track{background:var(--soft2);border-radius:100px;height:20px;overflow:hidden;display:flex}
+  .bar-g{background:var(--teal);height:100%}.bar-a{background:var(--purple);height:100%}
+  .bar-row .bv{font-family:var(--serif);font-weight:700;text-align:right;color:var(--navy)}
+  .grp-lbl{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--blue-d);margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+  .note{background:var(--blue-lt);border-left:3px solid var(--blue);border-radius:6px;padding:11px 14px;font-size:12px;color:var(--blue-d);line-height:1.5;margin-top:14px}
+  .note.amber{background:var(--amber-lt);border-left-color:var(--amber);color:#92590a}
+  .ratecard{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-top:10px}
+  .rc-item{background:var(--soft);border:1px solid var(--border);border-radius:var(--r-xs);padding:8px 10px}
+  .rc-item label{font-size:10px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+  .rc-item input{padding:5px 7px;font-size:12px}
+  details.adv{margin-top:14px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--soft)}
+  details.adv summary{cursor:pointer;padding:11px 14px;font-weight:700;font-size:12.5px;color:var(--navy);list-style:none}
+  details.adv summary::-webkit-details-marker{display:none}
+  details.adv summary::before{content:'▸ ';color:var(--blue)}
+  details.adv[open] summary::before{content:'▾ '}
+  details.adv .adv-body{padding:0 14px 14px}
+  .preset-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+  .preset{font-size:10.5px;font-weight:700;border:1px solid var(--border);background:var(--bg);color:var(--blue-d);border-radius:100px;padding:5px 12px;cursor:pointer;transition:all .15s}
+  .preset:hover{background:var(--blue-lt);border-color:var(--blue)}
+.pdf-btn{font-family:var(--font);font-size:12.5px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--navy),var(--navy3));border:1px solid var(--navy);border-radius:var(--r-sm);padding:10px 18px;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .15s;display:inline-flex;align-items:center;gap:8px}
+  .pdf-btn:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);border-color:var(--green)}
+  textarea.ta{width:100%;font-family:var(--font);font-size:12.5px;color:var(--navy);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-xs);padding:9px 10px;outline:none;resize:vertical;line-height:1.5}
+  textarea.ta:focus{border-color:var(--blue)}
+  footer{padding:24px 0;text-align:center;font-size:.72rem;color:var(--faint);font-weight:300;border-top:1px solid var(--border);margin-top:30px}
+  .scope-strip{background:var(--navy);border-radius:var(--r);padding:13px 18px;margin-top:14px;color:rgba(255,255,255,.9);font-size:12px;line-height:1.5}
+  .scope-strip b{color:var(--green)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+<div class="top">
+  <div class="top-l">
+    <svg class="sn-logo" xmlns="http://www.w3.org/2000/svg" width="132" height="20" viewBox="0 0 132 20"><path d="M32.022,6.391a5.626,5.626,0,0,0-3.61,1.3V6.523H25.119V19.35h3.425v-8.2a4.073,4.073,0,0,1,3.109-1.588,3.494,3.494,0,0,1,1.374.206V6.479a5.851,5.851,0,0,0-1.005-.088" fill="#fff" fill-rule="evenodd"/><path d="M2.16,15.436a5.369,5.369,0,0,0,3.5,1.269c.922,0,1.633-.45,1.633-1.084,0-1.931-6.191-1.243-6.191-5.369,0-2.459,2.371-3.993,4.9-3.993a7.9,7.9,0,0,1,4.32,1.3L8.72,10.04a4.3,4.3,0,0,0-2.45-.872c-.948,0-1.739.37-1.739,1.031,0,1.666,6.192,1.005,6.192,5.448,0,2.46-2.4,3.967-5.085,3.967A8.815,8.815,0,0,1,.5,17.9Z" fill="#fff" fill-rule="evenodd"/><path d="M23.657,12.817c0-3.57-2.5-6.558-6.034-6.558-3.794,0-6.218,3.12-6.218,6.691A6.4,6.4,0,0,0,18.1,19.614a6.919,6.919,0,0,0,5.243-2.3l-1.95-1.957a4.515,4.515,0,0,1-3.214,1.481A3.36,3.36,0,0,1,14.725,13.8h8.853A5.735,5.735,0,0,0,23.657,12.817Zm-8.774-1.533a2.775,2.775,0,0,1,2.74-2.248,2.552,2.552,0,0,1,2.53,2.248Z" fill="#fff" fill-rule="evenodd"/><polygon points="41.19 14.351 44.694 6.523 48.252 6.523 42.376 19.35 40.005 19.35 34.129 6.523 37.686 6.523 41.19 14.351" fill="#fff" fill-rule="evenodd"/><path d="M51.128.5A2.2,2.2,0,1,1,48.888,2.7,2.2,2.2,0,0,1,51.128.5" fill="#fff" fill-rule="evenodd"/><rect x="49.415" y="6.523" width="3.425" height="12.827" fill="#fff"/><path d="M67,16.731a6.766,6.766,0,0,1-5.8,2.883,6.68,6.68,0,1,1,.026-13.355,6.808,6.808,0,0,1,5.375,2.565l-2.424,2.142a3.7,3.7,0,0,0-2.951-1.534A3.433,3.433,0,0,0,57.78,12.95a3.383,3.383,0,0,0,3.531,3.49,3.741,3.741,0,0,0,3.056-1.692Z" fill="#fff" fill-rule="evenodd"/><path d="M79.442,17.313a6.918,6.918,0,0,1-5.243,2.3,6.4,6.4,0,0,1-6.692-6.664c0-3.571,2.424-6.691,6.218-6.691,3.53,0,6.033,2.988,6.033,6.558a5.635,5.635,0,0,1-.079.979H70.826a3.36,3.36,0,0,0,3.452,3.041,4.52,4.52,0,0,0,3.215-1.481Zm-3.188-6.029a2.551,2.551,0,0,0-2.529-2.248,2.774,2.774,0,0,0-2.74,2.248Z" fill="#fff" fill-rule="evenodd"/><path d="M81.12,19.35V6.523h3.293V7.554a5.625,5.625,0,0,1,3.609-1.295,5.747,5.747,0,0,1,4.427,2.063,6.482,6.482,0,0,1,1.317,4.5V19.35H90.341v-6.8a3.11,3.11,0,0,0-.764-2.407,2.69,2.69,0,0,0-1.923-.714,4.076,4.076,0,0,0-3.109,1.587V19.35Z" fill="#fff" fill-rule="evenodd"/><path d="M102.586,6.259A7.5,7.5,0,0,0,97.419,19.21a1.481,1.481,0,0,0,1.926.1,5.355,5.355,0,0,1,6.394,0,1.485,1.485,0,0,0,1.937-.113,7.5,7.5,0,0,0-5.09-12.94M102.542,17.5a3.637,3.637,0,0,1-3.734-3.733,3.734,3.734,0,1,1,7.468,0,3.637,3.637,0,0,1-3.734,3.733" fill="#62d84e" fill-rule="evenodd"/><polygon points="116.788 19.35 114.237 19.35 109.15 6.523 112.57 6.523 115.359 13.853 118.094 6.523 120.952 6.523 123.662 13.853 126.475 6.523 129.896 6.523 124.809 19.35 122.258 19.35 119.523 12.046 116.788 19.35" fill="#fff" fill-rule="evenodd"/><path d="M129.935,17.9h-.289v.543H129.4V16.957h.6a.476.476,0,0,1,.478.478.469.469,0,0,1-.295.432l.338.579h-.268Zm-.289-.219H130a.249.249,0,0,0,0-.5h-.351Z" fill="#fff"/><path d="M129.9,16.348a1.379,1.379,0,1,1-1.378,1.379,1.381,1.381,0,0,1,1.378-1.379m0-.218a1.6,1.6,0,1,0,1.6,1.6,1.6,1.6,0,0,0-1.6-1.6Z" fill="#fff"/></svg>
+    <span class="div"></span><span class="top-app">FSI <b>Assist</b> Calculator</span>
+  </div>
+  <div class="live"><span class="pulse"></span> Now Assist · FSO</div>
+</div>
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Financial Services Operations · GenAI + Agentic Sizing</div>
+    <h1>ServiceNow <span class="ac">FSI Assist</span> Calculator</h1>
+    <p>Bottom-up, activity-based estimate of annual Now Assist demand across Banking and Insurance — sized by the AI work each process performs, separating GenAI skills from agentic execution. Size one process, a whole line, or an entire domain.</p>
+    <div class="stagepill">✅ <b>Stage 3</b> — risk factors · ROI · annual burn-down pool · per-process overrides</div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="grid-ctrl">
+    <div class="panel">
+      <div class="p-title">🎯 Scope &amp; selection</div>
+      <div class="p-sub">Domain → business line → sub-process. Choose <b>All</b> at either level to roll up the whole line or the whole domain.</div>
+      <div class="sel-row" style="margin-top:13px">
+        <div><label class="lab">Domain</label><select id="selDomain"></select></div>
+        <div><label class="lab">Business line</label><select id="selLine"></select></div>
+        <div><label class="lab">Sub-process</label><select id="selSub"></select></div>
+      </div>
+      <div class="field" style="margin-top:13px">
+        <label class="lab">Account / customer</label>
+        <input type="text" id="acctName" placeholder="e.g. Income Insurance" style="width:100%;font-family:var(--font);font-size:13px;font-weight:600;color:var(--navy);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-xs);padding:9px 10px;outline:none">
+      </div>
+      <div class="field" style="margin-top:13px">
+        <label class="lab">Engagement assumptions / notes</label>
+        <textarea id="assumeText" class="ta" rows="2" placeholder="e.g. Account: Income Insurance · FY26 · SI: HCL · scope excludes Group Health · volumes per actuals shared 12-Jun · pricing per EA construct" oninput="render()"></textarea>
+        <div class="p-sub">Documented in the generated PDF and echoed on the ROI tab — capture account, scope boundaries, data sources and commercial construct.</div>
+      </div>
+      <div class="scope-strip">
+        <b>Scope assumption:</b> ServiceNow models the orchestration layer only — intake across email / portal / app, fetch &amp; write to core systems, run KYC·AML·bureau·fraud integrations, summarise documents, decide, and notify. Core processing inside source systems is out of scope.
+      </div>
+    </div>
+    <div class="panel">
+      <div class="p-title">⚙️ Global assumptions</div>
+      <div class="field" style="margin-top:13px">
+        <label class="lab">Assist intensity scale</label>
+        <div class="seg teal" id="segScale"><button data-v="y2026" class="on">2026 AI-native</button><button data-v="legacy">Legacy</button></div>
+        <div class="p-sub" id="scaleNote">Simple ≈ 1 · doc-Q&amp;A ≈ 10 · agentic 25–150 by tier. Editable below.</div>
+      </div>
+      <div class="field">
+        <label class="lab">Case volume</label>
+        <div class="pct-row">
+          <input type="number" id="inVol" class="mini" style="width:128px!important" value="120000" min="0" oninput="onMainVol()">
+          <div class="seg" id="segPeriod"><button data-v="annual" class="on">per year</button><button data-v="month">per month</button></div>
+        </div>
+        <div class="p-sub" id="volNote">Total cases entering this sub-process.</div>
+      </div>
+      <div class="field" style="margin-bottom:4px">
+        <label class="lab">% AI-touched <span id="aiVal" style="color:var(--blue);font-weight:800">80%</span></label>
+        <input type="range" id="inAI" min="0" max="100" value="80" style="width:100%;accent-color:var(--blue)" oninput="render()">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+      <div><div class="p-title">🎚️ Scenario complexity mix</div>
+        <div class="p-sub">Split volume by case complexity. Complex cases trigger more actions and heavier agentic execution. Should total 100%. Applies across all in-scope processes.</div></div>
+      <div class="preset-row">
+        <button class="preset" onclick="preset(60,30,10)">Mostly simple</button>
+        <button class="preset" onclick="preset(40,40,20)">Balanced</button>
+        <button class="preset" onclick="preset(20,40,40)">Complex-heavy</button>
+      </div>
+    </div>
+    <div class="pct-row" style="margin-top:14px;gap:22px">
+      <div><label class="lab" style="color:var(--green-d)">● Simple %</label><input type="number" id="mixS" class="mini" value="40" min="0" max="100" oninput="render()"></div>
+      <div><label class="lab" style="color:var(--amber)">● Moderate %</label><input type="number" id="mixM" class="mini" value="40" min="0" max="100" oninput="render()"></div>
+      <div><label class="lab" style="color:var(--red)">● Complex %</label><input type="number" id="mixC" class="mini" value="20" min="0" max="100" oninput="render()"></div>
+      <div id="mixWarn" style="font-size:11px;font-weight:700;color:var(--red);align-self:center"></div>
+    </div>
+    <details class="adv">
+      <summary>Advanced — agentic handling % per tier &amp; editable rate card</summary>
+      <div class="adv-body">
+        <label class="lab" style="margin-top:6px">% of each tier's cases handled by an AI agent (vs GenAI-assisted human)</label>
+        <div class="pct-row" style="gap:22px">
+          <div><label class="lab" style="color:var(--green-d)">Simple</label><input type="number" id="pagS" class="mini" value="5" min="0" max="100" oninput="render()"></div>
+          <div><label class="lab" style="color:var(--amber)">Moderate</label><input type="number" id="pagM" class="mini" value="40" min="0" max="100" oninput="render()"></div>
+          <div><label class="lab" style="color:var(--red)">Complex</label><input type="number" id="pagC" class="mini" value="85" min="0" max="100" oninput="render()"></div>
+        </div>
+        <label class="lab" style="margin-top:14px">Assist rate card — <span id="rcScaleLbl">2026 AI-native</span> (assists per occurrence)</label>
+        <div class="ratecard" id="rateCard"></div>
+        <div class="note amber" style="margin-top:12px">Planning-grade defaults derived from ServiceNow's published model. <b>Editable</b>; calibrated against the live assist rate card in Stage 3. Errors and guardrail-blocked calls are not charged in production.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="panel" style="margin-top:14px">
+    <div class="p-title">⚠️ Risk factors &amp; seasonality</div>
+    <div class="p-sub">Adjust for rework and peak load. Reopen uplift and the reflection-loop factor increase annual assists; the peak factor sizes the busiest month for capacity.</div>
+    <div class="pct-row" style="margin-top:14px;gap:26px">
+      <div><label class="lab">Reopen / rework uplift <span id="reopenV" style="color:var(--red);font-weight:800">12%</span></label><input type="range" id="inReopen" min="0" max="40" value="12" style="width:170px;accent-color:var(--red)" oninput="render()"></div>
+      <div><label class="lab">Complex reflection-loop ×<span id="loopV" style="color:var(--purple);font-weight:800">1.0</span></label><input type="range" id="inLoop" min="1" max="2" step="0.1" value="1" style="width:170px;accent-color:var(--purple)" oninput="render()"></div>
+      <div><label class="lab">Peak-month factor ×<span id="peakV" style="color:var(--blue);font-weight:800">1.5</span></label><input type="range" id="inPeak" min="1" max="3" step="0.1" value="1.5" style="width:170px;accent-color:var(--blue)" oninput="render()"></div>
+    </div>
+    <div class="note">Reflection-loop ×N models uncapped agentic self-correction on complex cases — a key over-consumption risk. Keep at 1.0 when loop caps are enforced.</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi k-total"><div class="kl" id="kTotalL">Annual assists — total</div><div class="kv" id="kTotal">—</div><div class="kd" id="kTotalSub">GenAI + agentic</div></div>
+    <div class="kpi k-genai"><div class="kl">✨ GenAI skills</div><div class="kv" id="kGenai">—</div><div class="kd" id="kGenaiSub">discrete skill calls</div></div>
+    <div class="kpi k-agentic"><div class="kl">🤖 Agentic execution</div><div class="kv" id="kAgentic">—</div><div class="kd" id="kAgenticSub">orchestrated runs</div></div>
+    <div class="kpi k-case"><div class="kl">Blended assists / case</div><div class="kv" id="kCase">—</div><div class="kd" id="kCaseSub">weighted by mix</div></div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:0 0 14px"><span style="font-size:11px;color:var(--muted);font-weight:600">Numbers ready?</span><button onclick="generatePDF()" class="pdf-btn">⬇ Generate PDF report</button></div>
+  <div class="tabbar">
+    <button class="tab on" data-t="calc" onclick="tabTo('calc',this)">🧮 Assist Calculator</button>
+    <button class="tab" data-t="proc" onclick="tabTo('proc',this)">🗺️ Process Detail</button>
+    <button class="tab" data-t="sum" onclick="tabTo('sum',this)">📊 Summary &amp; Roll-up</button>
+    <button class="tab" data-t="roi" onclick="tabTo('roi',this)">💰 ROI &amp; Pool</button>
+  </div>
+  <div id="tab-calc"></div>
+  <div id="tab-proc" style="display:none"></div>
+  <div id="tab-sum" style="display:none"></div>
+  <div id="tab-roi" style="display:none">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="p-title">💰 ROI &amp; annual burn-down pool</div>
+      <div class="p-sub">All figures below are <b>your assumptions</b> — set <b>cost per assist</b> to match your commercial construct, and replace the operational baselines with your own figures. Not a quote.</div>
+      <div class="ratecard" style="margin-top:14px">
+        <div class="rc-item"><label>Currency</label><select id="selCur" onchange="render()"><option>USD</option><option>SGD</option><option>EUR</option><option>GBP</option><option>AUD</option><option>MYR</option><option>INR</option><option>JPY</option></select></div>
+        <div class="rc-item"><label>Cost per assist</label><input type="number" id="inUnit" min="0" step="0.01" value="0.05" oninput="render()"></div>
+        <div class="rc-item"><label>Manual handling min / case</label><input type="number" id="inMin" min="0" step="1" value="18" oninput="render()"></div>
+        <div class="rc-item"><label>Fulfiller loaded cost / hr</label><input type="number" id="inRate" min="0" step="1" value="45" oninput="render()"></div>
+        <div class="rc-item"><label>Time saved on AI-touched %</label><input type="number" id="inSaved" min="0" max="100" step="1" value="60" oninput="render()"></div>
+        <div class="rc-item"><label>Annual assist pool (entitlement)</label><input type="number" id="inEnt" min="0" step="1000" value="0" oninput="render()"></div>
+      </div>
+    </div>
+    <div id="roiResults"></div>
+  </div>
+  <footer>© 2026 ServiceNow, Inc. All rights reserved. · Planning-grade estimate — not a quote. Intensities to be validated with the ServiceNow pricing desk.</footer>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+const RATE = {
+  legacy: { extraction:1, classification:1, reasoning:1, summarization:1, communication:1, docqa:1, agentic_S:25, agentic_M:25, agentic_C:25 },
+  y2026:  { extraction:2, classification:1, reasoning:2, summarization:1, communication:1, docqa:10, agentic_S:25, agentic_M:50, agentic_C:150 }
+};
+const ACT_LABEL = { extraction:'Extraction', classification:'Classification', reasoning:'Reasoning', summarization:'Summarization', communication:'Communication', docqa:'Doc-Q&A / RAG' };
+const MATRIX = {
+  banking:{ label:'Banking', lines:{
+    retail:{ label:'Retail Banking', subs:{ onboard:'Onboarding & Account Origination', lending:'Lending & Credit Origination', servicing:'Servicing & Requests', payments:'Payments & Disputes', complaints:'Complaints' }},
+    cib:{ label:'Corporate & Institutional', subs:{ kyb:'Entity Onboarding & KYB', corplend:'Corporate Lending', trade:'Trade Finance', txnbank:'Transaction Banking & Cash Mgmt', investig:'Servicing & Investigations' }},
+    wealth:{ label:'Wealth Management', subs:{ wonboard:'Client Onboarding & Suitability', portfolio:'Portfolio & Order Servicing', advisory:'Advisory & Mandate Changes', corpact:'Corporate Actions & Settlement', wservicing:'Servicing & Complaints' }}
+  }},
+  insurance:{ label:'Insurance', lines:{
+    retail:{ label:'Retail', subs:{ onboard:'Onboarding & New Business', policyadmin:'Policy Admin & Servicing', underwriting:'Underwriting', claims:'Claims (FNOL → Settlement)', renewal:'Renewals' }},
+    commercial:{ label:'Commercial', subs:{ submission:'Submission Intake', cuw:'Underwriting (Commercial / P&M / Marine)', cendorse:'Policy Admin & Endorsements', cclaims:'Claims', crenewal:'Renewals' }},
+    group:{ label:'Group', subs:{ scheme:'Scheme Onboarding & Census', membership:'Membership & Policy Admin', guw:'Group Underwriting', gclaims:'Claims', grenewal:'Renewals & Re-rating' }}
+  }}
+};
+// default ANNUAL volumes (planning-grade, editable)
+const VOL0 = {
+  'insurance.retail.onboard':80000,'insurance.retail.policyadmin':300000,'insurance.retail.underwriting':120000,'insurance.retail.claims':315000,'insurance.retail.renewal':250000,
+  'insurance.commercial.submission':40000,'insurance.commercial.cuw':30000,'insurance.commercial.cendorse':35000,'insurance.commercial.cclaims':50000,'insurance.commercial.crenewal':28000,
+  'insurance.group.scheme':8000,'insurance.group.membership':120000,'insurance.group.guw':9000,'insurance.group.gclaims':180000,'insurance.group.grenewal':12000,
+  'banking.retail.onboard':200000,'banking.retail.lending':90000,'banking.retail.servicing':600000,'banking.retail.payments':400000,'banking.retail.complaints':70000,
+  'banking.cib.kyb':25000,'banking.cib.corplend':18000,'banking.cib.trade':60000,'banking.cib.txnbank':220000,'banking.cib.investig':90000,
+  'banking.wealth.wonboard':30000,'banking.wealth.portfolio':150000,'banking.wealth.advisory':80000,'banking.wealth.corpact':110000,'banking.wealth.wservicing':60000
+};
+const S=(n,a,m,q,t)=>({n,a,m,q,t});
+const PROC = {
+  'insurance.retail.claims':{detailed:true,summary:'End-to-end retail claim from first notice of loss to settlement. Simple fixed-benefit claims run largely straight-through; complex claims pull heavy document sets and a multi-agent orchestration with supervisor retries.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'FNOL Intake & Triage',steps:[S('Capture FNOL across email / app / portal / walk-in','extraction','system',1,'SMC'),S('Extract FNOL form & first-party details','extraction','genai',2,'SMC'),S('Extract supporting evidence (photos, police report, invoices)','extraction','genai',3,'MC'),S('Severity & complexity triage','classification','genai',1,'SMC')]},
+    {name:'Coverage & Eligibility',steps:[S('Fetch policy & verify coverage / deductible (core)','reasoning','genai',1,'SMC'),S('Benefit & eligibility decisioning','reasoning','genai',1,'MC'),S('Document completeness check (RAG over policy wording)','docqa','genai',1,'MC')]},
+    {name:'Fraud & Validation',steps:[S('Fraud / anomaly detection','reasoning','genai',1,'MC'),S('Repair / medical estimate validation','reasoning','genai',1,'C')]},
+    {name:'Adjudication & Settlement',steps:[S('Adjuster case summary / 360','summarization','genai',1,'SMC'),S('Settlement / decision letter','communication','genai',1,'SMC'),S('Acknowledgement & status comms','communication','genai',1,'SMC'),S('Manual adjuster review (complex)','reasoning','human',1,'C'),S('Payment instruction to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.retail.onboard':{detailed:true,summary:'New-business issuance for retail policies from quote/application capture to policy issuance, with KYC, rating validation and document generation.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Quote & Application Intake',steps:[S('Capture quote / application (web, app, aggregator, agent)','extraction','system',1,'SMC'),S('Extract applicant & risk details','extraction','genai',2,'SMC'),S('Product & needs classification','classification','genai',1,'SMC')]},
+    {name:'Risk & Eligibility',steps:[S('KYC / identity verification','reasoning','genai',1,'SMC'),S('Eligibility & rule checks','reasoning','genai',1,'MC'),S('Document completeness (RAG over forms)','docqa','genai',1,'MC')]},
+    {name:'Pricing & Issuance',steps:[S('Rating & premium-calc validation','reasoning','genai',1,'MC'),S('Policy document generation','summarization','genai',1,'SMC'),S('Welcome & policy comms','communication','genai',1,'SMC'),S('Manual review (non-standard risk)','reasoning','human',1,'C'),S('Issue policy to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.retail.policyadmin':{detailed:true,summary:'Mid-term servicing and endorsements for retail policies — address/beneficiary changes, cover adjustments and policy queries.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Request Intake',steps:[S('Capture service request (email / app / portal / call)','extraction','system',1,'SMC'),S('Extract request & supporting docs','extraction','genai',2,'SMC'),S('Intent classification & routing','classification','genai',1,'SMC')]},
+    {name:'Validation & Action',steps:[S('Fetch policy & validate eligibility for change','reasoning','genai',1,'SMC'),S('Policy wording check (RAG)','docqa','genai',1,'MC'),S('Endorsement / change reasoning','reasoning','genai',1,'MC')]},
+    {name:'Confirmation',steps:[S('Update summary / 360','summarization','genai',1,'SMC'),S('Confirmation & document comms','communication','genai',1,'SMC'),S('Manual review (complex change)','reasoning','human',1,'C'),S('Apply change to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.retail.underwriting':{detailed:true,summary:'Retail risk assessment from proposal capture to terms decision, with disclosure verification, guideline checks and fraud screening.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Submission Intake',steps:[S('Capture proposal & disclosures','extraction','system',1,'SMC'),S('Extract application, medical / financial docs','extraction','genai',3,'SMC'),S('Risk classification & triage','classification','genai',1,'SMC')]},
+    {name:'Risk Assessment',steps:[S('Fetch history & verify disclosures','reasoning','genai',1,'SMC'),S('Medical / financial necessity reasoning','reasoning','genai',1,'MC'),S('Guideline check (RAG over UW manual)','docqa','genai',1,'MC'),S('Fraud / anomaly detection','reasoning','genai',1,'MC')]},
+    {name:'Decision',steps:[S('Risk score & terms decisioning','reasoning','genai',1,'MC'),S('UW case summary','summarization','genai',1,'SMC'),S('Decision & terms comms','communication','genai',1,'SMC'),S('Senior UW referral (complex)','reasoning','human',1,'C')]}
+  ]},
+  'insurance.retail.renewal':{detailed:true,summary:'Retail renewals — re-rating, retention assessment and renewal-offer generation across the back-book.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Renewal Trigger & Intake',steps:[S('Identify upcoming renewals & pull policy','extraction','system',1,'SMC'),S('Extract claims / usage & risk-change data','extraction','genai',2,'SMC'),S('Renewal complexity classification','classification','genai',1,'SMC')]},
+    {name:'Re-rating & Review',steps:[S('Re-rate & premium-change reasoning','reasoning','genai',1,'MC'),S('Retention / churn-risk assessment','reasoning','genai',1,'MC'),S('Policy / regulatory check (RAG)','docqa','genai',1,'C')]},
+    {name:'Offer & Comms',steps:[S('Renewal notice generation','summarization','genai',1,'SMC'),S('Renewal offer & reminder comms','communication','genai',2,'SMC'),S('Manual review (material change / dispute)','reasoning','human',1,'C'),S('Renew in core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.commercial.submission':{detailed:true,summary:'Commercial new-business submission intake from brokers — extraction of schedules and loss runs, clearance, and routing to underwriting.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Broker Submission Intake',steps:[S('Receive broker submission (email / portal)','extraction','system',1,'SMC'),S('Extract submission, schedules, loss runs','extraction','genai',4,'SMC'),S('Appetite & class classification','classification','genai',1,'SMC')]},
+    {name:'Triage & Clearance',steps:[S('Clearance & conflict check','reasoning','genai',1,'SMC'),S('Completeness & data-quality check (RAG)','docqa','genai',1,'MC'),S('Risk pre-assessment','reasoning','genai',1,'MC')]},
+    {name:'Routing',steps:[S('Submission summary for underwriter','summarization','genai',1,'SMC'),S('Acknowledgement / info-request comms','communication','genai',1,'SMC'),S('Manual triage (large / complex risk)','reasoning','human',1,'C')]}
+  ]},
+  'insurance.commercial.cuw':{detailed:true,summary:'Commercial / Plant & Machinery / Marine underwriting — exposure and accumulation reasoning, survey analysis, catastrophe and route risk, rating and terms.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Risk Intake',steps:[S('Extract risk schedules, surveys, valuations','extraction','genai',4,'SMC'),S('Risk classification & segmentation','classification','genai',1,'SMC')]},
+    {name:'Risk Engineering & Assessment',steps:[S('Exposure & accumulation reasoning','reasoning','genai',1,'MC'),S('Survey / loss-history analysis (RAG)','docqa','genai',1,'MC'),S('Catastrophe / marine route risk reasoning','reasoning','genai',1,'C'),S('Sanctions / vessel / facility checks','reasoning','genai',1,'MC')]},
+    {name:'Pricing & Decision',steps:[S('Rating, terms & conditions reasoning','reasoning','genai',1,'MC'),S('UW & risk-engineering summary','summarization','genai',1,'SMC'),S('Quote & terms comms','communication','genai',1,'SMC'),S('Senior UW / referral (complex)','reasoning','human',1,'C')]}
+  ]},
+  'insurance.commercial.cendorse':{detailed:true,summary:'Mid-term endorsements on commercial policies — coverage and exposure-impact assessment, wording checks and premium adjustment.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Endorsement Intake',steps:[S('Capture mid-term change request','extraction','system',1,'SMC'),S('Extract change details & docs','extraction','genai',2,'SMC'),S('Change classification','classification','genai',1,'SMC')]},
+    {name:'Assessment',steps:[S('Coverage & exposure-impact reasoning','reasoning','genai',1,'MC'),S('Wording / clause check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Issuance',steps:[S('Endorsement & premium-adjustment summary','summarization','genai',1,'SMC'),S('Confirmation comms','communication','genai',1,'SMC'),S('Manual review (material / complex)','reasoning','human',1,'C'),S('Apply endorsement to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.commercial.cclaims':{detailed:true,summary:'Commercial claims — loss notice and survey intake, coverage and policy-response reasoning, fraud/subrogation, reserving and settlement.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'FNOL & Intake',steps:[S('Capture loss notice (broker / insured)','extraction','system',1,'SMC'),S('Extract FNOL, surveys, invoices, reports','extraction','genai',4,'SMC'),S('Severity & complexity triage','classification','genai',1,'SMC')]},
+    {name:'Coverage & Investigation',steps:[S('Coverage & policy-response reasoning','reasoning','genai',1,'SMC'),S('Loss-adjuster / survey doc analysis (RAG)','docqa','genai',1,'MC'),S('Fraud / subrogation reasoning','reasoning','genai',1,'MC'),S('Reserve estimation reasoning','reasoning','genai',1,'C')]},
+    {name:'Adjudication & Settlement',steps:[S('Claim summary for adjuster / 360','summarization','genai',1,'SMC'),S('Decision & settlement comms','communication','genai',1,'SMC'),S('Complex adjuster / legal review','reasoning','human',1,'C'),S('Settlement to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.commercial.crenewal':{detailed:true,summary:'Commercial renewals — re-rating on exposure change, loss-ratio and profitability analysis, retention strategy and broker negotiation.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Renewal Strategy & Intake',steps:[S('Pull policy, claims & exposure data','extraction','genai',3,'SMC'),S('Renewal complexity classification','classification','genai',1,'SMC')]},
+    {name:'Re-rating & Review',steps:[S('Re-rating & exposure-change reasoning','reasoning','genai',1,'MC'),S('Loss-ratio / profitability analysis (RAG)','docqa','genai',1,'MC'),S('Retention & negotiation-position reasoning','reasoning','genai',1,'C')]},
+    {name:'Offer',steps:[S('Renewal terms summary','summarization','genai',1,'SMC'),S('Broker renewal comms','communication','genai',1,'SMC'),S('Underwriter review (complex)','reasoning','human',1,'C')]}
+  ]},
+  'insurance.group.scheme':{detailed:true,summary:'Group scheme onboarding and census intake — member-data normalisation, data-quality and eligibility checks, scheme and member setup.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Scheme Setup Intake',steps:[S('Receive scheme submission & census file','extraction','system',1,'SMC'),S('Extract & normalise census / member data','extraction','genai',4,'SMC'),S('Scheme classification & benefit mapping','classification','genai',1,'SMC')]},
+    {name:'Validation',steps:[S('Census data-quality & dedup reasoning','reasoning','genai',1,'MC'),S('Eligibility & benefit-rule check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Setup',steps:[S('Scheme setup summary','summarization','genai',1,'SMC'),S('HR / broker onboarding comms','communication','genai',1,'SMC'),S('Manual review (large / complex scheme)','reasoning','human',1,'C'),S('Create scheme & members in core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.group.membership':{detailed:true,summary:'Ongoing group membership administration — joiners, leavers and member changes with eligibility and benefit-rule processing.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Member Change Intake',steps:[S('Capture joiners / leavers / changes (file / portal)','extraction','system',1,'SMC'),S('Extract & validate member updates','extraction','genai',2,'SMC'),S('Change-type classification','classification','genai',1,'SMC')]},
+    {name:'Processing',steps:[S('Eligibility & coverage reasoning','reasoning','genai',1,'MC'),S('Benefit-rule check (RAG)','docqa','genai',1,'C')]},
+    {name:'Confirmation',steps:[S('Member update summary','summarization','genai',1,'SMC'),S('Confirmation comms','communication','genai',1,'SMC'),S('Apply changes to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.group.guw':{detailed:true,summary:'Group underwriting — experience-rating and loss-ratio reasoning, demographic and stop-loss analysis, rating and terms.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Intake',steps:[S('Extract census, claims experience, scheme data','extraction','genai',3,'SMC'),S('Risk classification','classification','genai',1,'SMC')]},
+    {name:'Experience Assessment',steps:[S('Experience-rating & loss-ratio reasoning','reasoning','genai',1,'MC'),S('Demographic / industry-risk analysis (RAG)','docqa','genai',1,'MC'),S('Stop-loss / large-claim reasoning','reasoning','genai',1,'C')]},
+    {name:'Decision',steps:[S('Rating & terms reasoning','reasoning','genai',1,'MC'),S('UW summary','summarization','genai',1,'SMC'),S('Terms comms','communication','genai',1,'SMC'),S('Senior UW referral (complex)','reasoning','human',1,'C')]}
+  ]},
+  'insurance.group.gclaims':{detailed:true,summary:'Group claims (e.g. group health / life) — eligibility and benefit-limit checks, fraud/duplicate screening and settlement.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Claim Intake',steps:[S('Capture claim (member / HR / provider)','extraction','system',1,'SMC'),S('Extract claim form, bills, certificates','extraction','genai',3,'SMC'),S('Eligibility & benefit triage','classification','genai',1,'SMC')]},
+    {name:'Adjudication',steps:[S('Member eligibility & coverage reasoning','reasoning','genai',1,'SMC'),S('Benefit-limit / wording check (RAG)','docqa','genai',1,'MC'),S('Fraud / duplicate reasoning','reasoning','genai',1,'MC')]},
+    {name:'Settlement',steps:[S('Claim summary','summarization','genai',1,'SMC'),S('Decision & payment comms','communication','genai',1,'SMC'),S('Complex / medical review','reasoning','human',1,'C'),S('Settlement to core','reasoning','system',1,'SMC')]}
+  ]},
+  'insurance.group.grenewal':{detailed:true,summary:'Group renewals & re-rating — experience re-rating, loss-ratio trends, retention and benefit-change reasoning.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Renewal Intake',steps:[S('Pull scheme, census & claims experience','extraction','genai',3,'SMC'),S('Renewal complexity classification','classification','genai',1,'SMC')]},
+    {name:'Re-rating',steps:[S('Experience re-rating reasoning','reasoning','genai',1,'MC'),S('Loss-ratio & trend analysis (RAG)','docqa','genai',1,'MC'),S('Retention & benefit-change reasoning','reasoning','genai',1,'C')]},
+    {name:'Offer',steps:[S('Renewal & re-rating summary','summarization','genai',1,'SMC'),S('HR / broker renewal comms','communication','genai',1,'SMC'),S('UW review (complex)','reasoning','human',1,'C')]}
+  ]},
+  'banking.retail.lending':{detailed:true,summary:'Retail loan / credit origination from multi-channel application intake to credit decision and disbursement. Moderate and complex applications add bureau parsing, fraud checks, collateral valuation and a multi-agent origination orchestration.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Application Intake',steps:[S('Capture application across branch / portal / app / email','extraction','system',1,'SMC'),S('Extract application data & income details','extraction','genai',2,'SMC'),S('Extract supporting docs (payslips, statements, ID)','extraction','genai',3,'MC'),S('Product & eligibility pre-screen','classification','genai',1,'SMC')]},
+    {name:'KYC / AML & Verification',steps:[S('Initiate KYC / AML screening (orchestrate integrations)','reasoning','genai',1,'SMC'),S('Identity & document verification','reasoning','genai',1,'SMC'),S('Deduplication & sanctions / PEP check','reasoning','genai',1,'MC')]},
+    {name:'Credit Assessment',steps:[S('Orchestrate credit-bureau pull & parse report','docqa','genai',1,'SMC'),S('Fraud / anomaly checks','reasoning','genai',1,'MC'),S('Affordability & policy / eligibility check','reasoning','genai',1,'SMC'),S('Collateral / valuation check (secured)','reasoning','genai',1,'C'),S('Credit evaluation & scoring','reasoning','genai',1,'MC')]},
+    {name:'Decision & Credit Memo',steps:[S('Credit memo generation','summarization','genai',1,'MC'),S('Adjudication summary / 360','summarization','genai',1,'SMC'),S('Decision & offer-letter comms','communication','genai',1,'SMC'),S('Manual underwriter review (complex)','reasoning','human',1,'C'),S('Post-approval checks & disbursement to core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.retail.onboard':{detailed:true,summary:'Retail account / customer onboarding — application capture, KYC/AML, risk-rating and account opening, with EDD for higher-risk customers.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Application Intake',steps:[S('Capture application (branch / app / portal)','extraction','system',1,'SMC'),S('Extract applicant data & ID docs','extraction','genai',2,'SMC'),S('Product classification & routing','classification','genai',1,'SMC')]},
+    {name:'KYC / AML',steps:[S('Identity verification & KYC','reasoning','genai',1,'SMC'),S('Sanctions / PEP / dedup check','reasoning','genai',1,'MC'),S('Document check (RAG)','docqa','genai',1,'MC'),S('Customer risk-rating reasoning','reasoning','genai',1,'MC')]},
+    {name:'Account Opening',steps:[S('Onboarding summary / 360','summarization','genai',1,'SMC'),S('Welcome & next-step comms','communication','genai',1,'SMC'),S('EDD / manual review (high-risk)','reasoning','human',1,'C'),S('Open account in core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.retail.servicing':{detailed:true,summary:'General retail service requests — multi-channel intake, account validation, procedure-grounded resolution and confirmation.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Request Intake',steps:[S('Capture request (app / portal / call / email)','extraction','system',1,'SMC'),S('Extract request & docs','extraction','genai',2,'SMC'),S('Intent classification & routing','classification','genai',1,'SMC')]},
+    {name:'Resolution',steps:[S('Fetch account & validate request','reasoning','genai',1,'SMC'),S('Policy / procedure check (RAG)','docqa','genai',1,'MC'),S('Action reasoning / decisioning','reasoning','genai',1,'MC')]},
+    {name:'Confirmation',steps:[S('Interaction summary','summarization','genai',1,'SMC'),S('Resolution comms','communication','genai',1,'SMC'),S('Manual handling (complex)','reasoning','human',1,'C'),S('Update core systems','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.retail.payments':{detailed:true,summary:'Payment disputes and chargebacks — transaction and evidence extraction, fraud/pattern reasoning, scheme-rule checks and resolution.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Dispute Intake',steps:[S('Capture dispute / chargeback (app / call)','extraction','system',1,'SMC'),S('Extract transaction & evidence docs','extraction','genai',2,'SMC'),S('Dispute classification & reason coding','classification','genai',1,'SMC')]},
+    {name:'Investigation',steps:[S('Fetch transaction history & validate','reasoning','genai',1,'SMC'),S('Fraud / pattern reasoning','reasoning','genai',1,'MC'),S('Scheme-rule / regulation check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Resolution',steps:[S('Dispute case summary','summarization','genai',1,'SMC'),S('Outcome & provisional-credit comms','communication','genai',1,'SMC'),S('Manual investigation (complex)','reasoning','human',1,'C'),S('Post adjustment to core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.retail.complaints':{detailed:true,summary:'Retail complaint handling — multi-channel intake, history summarisation, root-cause and redress reasoning with regulatory checks.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Complaint Intake',steps:[S('Capture complaint (multi-channel)','extraction','system',1,'SMC'),S('Extract complaint & history','extraction','genai',2,'SMC'),S('Severity & sentiment classification','classification','genai',1,'SMC')]},
+    {name:'Investigation',steps:[S('Pull interaction history & summarise context','summarization','genai',1,'SMC'),S('Root-cause & liability reasoning','reasoning','genai',1,'MC'),S('Regulatory / policy check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Resolution',steps:[S('Resolution & redress reasoning','reasoning','genai',1,'MC'),S('Response & resolution comms','communication','genai',2,'SMC'),S('Manual / escalated handling (complex)','reasoning','human',1,'C'),S('Log outcome to core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.cib.kyb':{detailed:true,summary:'Corporate / institutional client onboarding — entity and ownership extraction, KYB/AML with UBO unwrapping, sanctions and adverse-media screening, risk-rating and account creation.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Entity Intake',steps:[S('Capture onboarding request & entity docs (RM / portal)','extraction','system',1,'SMC'),S('Extract entity, incorporation & ownership docs','extraction','genai',4,'SMC'),S('Entity-type & risk classification','classification','genai',1,'SMC')]},
+    {name:'KYB / AML & UBO',steps:[S('Verify entity & registry lookups','reasoning','genai',1,'SMC'),S('UBO / ownership-structure unwrapping','reasoning','genai',1,'MC'),S('Sanctions / PEP / adverse-media screening','reasoning','genai',1,'MC'),S('Document completeness & policy check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Risk & Approval',steps:[S('Entity risk-rating & EDD reasoning','reasoning','genai',1,'MC'),S('KYB case summary / 360','summarization','genai',1,'SMC'),S('Onboarding status & RFI comms','communication','genai',1,'SMC'),S('Compliance / EDD manual review (high-risk)','reasoning','human',1,'C'),S('Create entity & accounts in core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.cib.corplend':{detailed:true,summary:'Corporate credit origination — financial spreading and ratio analysis, covenant reasoning, collateral valuation, risk rating, credit-paper generation and committee decision.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Deal Intake',steps:[S('Capture facility request & financials (RM)','extraction','system',1,'SMC'),S('Extract financial statements, schedules, collateral docs','extraction','genai',4,'SMC'),S('Facility & sector classification','classification','genai',1,'SMC')]},
+    {name:'Credit Analysis',steps:[S('Spreading & financial-ratio analysis','reasoning','genai',1,'MC'),S('Covenant & terms reasoning','reasoning','genai',1,'MC'),S('Bureau / market & sector data (RAG)','docqa','genai',1,'MC'),S('Collateral & security valuation','reasoning','genai',1,'C'),S('Credit-risk rating & PD / LGD reasoning','reasoning','genai',1,'MC')]},
+    {name:'Credit Paper & Decision',steps:[S('Credit paper / memo generation','summarization','genai',1,'MC'),S('Deal summary / 360','summarization','genai',1,'SMC'),S('Decision & term-sheet comms','communication','genai',1,'SMC'),S('Credit-committee / manual review (complex)','reasoning','human',1,'C'),S('Book facility in core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.cib.trade':{detailed:true,summary:'Trade finance instrument processing (LC / guarantee / collection) — document examination against UCP, sanctions and dual-use screening, discrepancy handling and settlement.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Instrument Intake',steps:[S('Capture trade instruction (SWIFT / portal / docs)','extraction','system',1,'SMC'),S('Extract LC / guarantee / shipping documents','extraction','genai',4,'SMC'),S('Instrument-type classification','classification','genai',1,'SMC')]},
+    {name:'Examination & Compliance',steps:[S('Document examination & UCP / discrepancy check (RAG)','docqa','genai',1,'MC'),S('Sanctions / dual-use / vessel screening','reasoning','genai',1,'MC'),S('Compliance & AML reasoning','reasoning','genai',1,'MC'),S('Discrepancy / fraud reasoning','reasoning','genai',1,'C')]},
+    {name:'Processing & Advice',steps:[S('Examination summary','summarization','genai',1,'SMC'),S('Advice / discrepancy / settlement comms','communication','genai',1,'SMC'),S('Trade-ops manual review (complex / discrepant)','reasoning','human',1,'C'),S('Process instrument in core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.cib.txnbank':{detailed:true,summary:'Transaction banking & cash-management servicing — entitlement and mandate validation, payment investigations and exception handling, scheme-rule checks and resolution.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Request Intake',steps:[S('Capture request (portal / host-to-host / email)','extraction','system',1,'SMC'),S('Extract request & payment / mandate docs','extraction','genai',2,'SMC'),S('Request classification & routing','classification','genai',1,'SMC')]},
+    {name:'Validation & Investigation',steps:[S('Validate entitlements & mandates','reasoning','genai',1,'SMC'),S('Payment investigation / exception reasoning','reasoning','genai',1,'MC'),S('Scheme / regulatory rule check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Resolution',steps:[S('Case summary','summarization','genai',1,'SMC'),S('Resolution & confirmation comms','communication','genai',1,'SMC'),S('Ops manual handling (complex / exception)','reasoning','human',1,'C'),S('Update core / payment systems','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.cib.investig':{detailed:true,summary:'AML / transaction investigations and RFIs — transaction aggregation, network and typology reasoning, adverse-media screening, narrative / SAR drafting and disposition.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Case Intake',steps:[S('Receive alert / RFI / investigation trigger','extraction','system',1,'SMC'),S('Extract transactions, KYC & supporting docs','extraction','genai',3,'SMC'),S('Alert / case classification & prioritisation','classification','genai',1,'SMC')]},
+    {name:'Investigation',steps:[S('Aggregate & summarise transaction history','summarization','genai',1,'SMC'),S('Pattern / network & typology reasoning','reasoning','genai',1,'MC'),S('Adverse-media / sanctions reasoning','reasoning','genai',1,'MC'),S('Regulatory / policy guidance check (RAG)','docqa','genai',1,'C')]},
+    {name:'Disposition',steps:[S('Investigation narrative / SAR-draft summary','summarization','genai',1,'MC'),S('Disposition & RFI comms','communication','genai',1,'SMC'),S('Investigator / MLRO manual review (complex)','reasoning','human',1,'C'),S('Log disposition to case system','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.wealth.wonboard':{detailed:true,summary:'Wealth client onboarding & suitability — profile and ID extraction, KYC/AML with source-of-wealth reasoning, risk-profiling and suitability assessment, account opening.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Client Intake',steps:[S('Capture onboarding & KYC docs (advisor / portal)','extraction','system',1,'SMC'),S('Extract client, ID & financial-profile docs','extraction','genai',3,'SMC'),S('Client segment & product classification','classification','genai',1,'SMC')]},
+    {name:'KYC / AML & Suitability',steps:[S('Identity verification & KYC','reasoning','genai',1,'SMC'),S('Source-of-wealth / source-of-funds reasoning','reasoning','genai',1,'MC'),S('Sanctions / PEP screening','reasoning','genai',1,'MC'),S('Risk-profile & suitability assessment','reasoning','genai',1,'MC'),S('Suitability / regulatory check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Account Opening',steps:[S('Onboarding & suitability summary','summarization','genai',1,'SMC'),S('Welcome & documentation comms','communication','genai',1,'SMC'),S('Compliance / EDD review (high-risk / PEP)','reasoning','human',1,'C'),S('Open account in core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.wealth.portfolio':{detailed:true,summary:'Portfolio & order servicing — instruction capture, holdings/limit and mandate validation, suitability and restriction checks, execution routing and confirmation.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Instruction Intake',steps:[S('Capture order / instruction (advisor / portal / call)','extraction','system',1,'SMC'),S('Extract instruction & supporting details','extraction','genai',1,'SMC'),S('Instruction classification & routing','classification','genai',1,'SMC')]},
+    {name:'Validation',steps:[S('Validate holdings, limits & mandate','reasoning','genai',1,'SMC'),S('Suitability / appropriateness check','reasoning','genai',1,'MC'),S('Restriction / regulatory check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Execution & Confirmation',steps:[S('Order / servicing summary','summarization','genai',1,'SMC'),S('Confirmation & contract-note comms','communication','genai',1,'SMC'),S('Dealer / manual handling (complex)','reasoning','human',1,'C'),S('Route to OMS / core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.wealth.advisory':{detailed:true,summary:'Advisory & mandate changes — portfolio and objective-fit reasoning, suitability and risk-alignment, guideline checks, recommendation rationale and supervisory review.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Request Intake',steps:[S('Capture advisory request / mandate change','extraction','system',1,'SMC'),S('Extract request, profile & portfolio context','extraction','genai',2,'SMC'),S('Request classification','classification','genai',1,'SMC')]},
+    {name:'Assessment',steps:[S('Portfolio & objective-fit reasoning','reasoning','genai',1,'MC'),S('Suitability & risk-alignment reasoning','reasoning','genai',1,'MC'),S('Product / regulatory guideline check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Recommendation',steps:[S('Advisory rationale / proposal summary','summarization','genai',1,'MC'),S('Recommendation & disclosure comms','communication','genai',1,'SMC'),S('Advisor / supervisory review (complex)','reasoning','human',1,'C'),S('Apply mandate change to core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.wealth.corpact':{detailed:true,summary:'Corporate actions & settlement — event-terms normalisation, entitlement calculation, election and deadline reasoning, settlement exceptions and client notification.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Event Intake',steps:[S('Ingest corporate-action notification (custodian / feed)','extraction','system',1,'SMC'),S('Extract & normalise event terms','extraction','genai',2,'SMC'),S('Event-type classification (mandatory / voluntary)','classification','genai',1,'SMC')]},
+    {name:'Processing',steps:[S('Entitlement calculation & holdings reasoning','reasoning','genai',1,'MC'),S('Election & deadline reasoning','reasoning','genai',1,'MC'),S('Settlement / reconciliation exception reasoning','reasoning','genai',1,'C'),S('Event terms / market-practice check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Notification & Settlement',steps:[S('Event & election summary','summarization','genai',1,'SMC'),S('Client election & confirmation comms','communication','genai',1,'SMC'),S('Ops manual review (complex / voluntary)','reasoning','human',1,'C'),S('Post entitlement / settlement to core','reasoning','system',1,'SMC')]}
+  ]},
+  'banking.wealth.wservicing':{detailed:true,summary:'Wealth servicing & complaints — multi-channel intake, context summarisation, resolution and root-cause reasoning with regulatory checks and redress.',agentic:{S:0,M:1,C:1},stages:[
+    {name:'Request Intake',steps:[S('Capture service request / complaint (multi-channel)','extraction','system',1,'SMC'),S('Extract request & client history','extraction','genai',2,'SMC'),S('Intent & sentiment classification','classification','genai',1,'SMC')]},
+    {name:'Resolution',steps:[S('Fetch account & summarise context','summarization','genai',1,'SMC'),S('Resolution / root-cause reasoning','reasoning','genai',1,'MC'),S('Policy / regulatory check (RAG)','docqa','genai',1,'MC')]},
+    {name:'Confirmation',steps:[S('Resolution & redress reasoning','reasoning','genai',1,'MC'),S('Response & resolution comms','communication','genai',1,'SMC'),S('Escalated / manual handling (complex)','reasoning','human',1,'C'),S('Update core systems','reasoning','system',1,'SMC')]}
+  ]}
+};
+function genericProc(){ return {detailed:false,summary:'Provisional scaffold — a generic 5-action service process. Full stage-by-stage detail for this sub-process is added in Stage 2 (next batch).',agentic:{S:0,M:1,C:1},stages:[
+  {name:'Generic service process (scaffold)',steps:[S('Intake & document extraction','extraction','genai',2,'SMC'),S('Classification & routing','classification','genai',1,'SMC'),S('Verification & decisioning','reasoning','genai',1,'MC'),S('Case summary','summarization','genai',1,'SMC'),S('Customer communication','communication','genai',1,'SMC')]}
+]};}
+
+/* ===================== STATE ===================== */
+const st = { domain:'insurance', line:'retail', sub:'claims', scale:'y2026', period:'annual',
+  ai:80, mixS:40, mixM:40, mixC:20, pagS:5, pagM:40, pagC:85, tab:'calc', volumes:Object.assign({},VOL0),
+  reopen:12, loopC:1, peak:1.5, currency:'USD', unitCost:0.05, manualMin:18, rate:45, timeSaved:60, entitlement:0,
+  ovEnable:false, aiOv:{}, mixOv:{} };
+const MIXPRESET={ simple:{S:60,M:30,C:10}, balanced:{S:40,M:40,C:20}, complex:{S:20,M:40,C:40} };
+const CURSYM={ SGD:'S$', USD:'US$', EUR:'€', GBP:'£', AUD:'A$', MYR:'RM', INR:'₹', JPY:'¥' };
+
+/* ===================== ENGINE ===================== */
+function rc(){ return RATE[st.scale]; }
+function isAll(){ return st.line==='__all__' || st.sub==='__all__'; }
+function inScope(){ const out=[];
+  if(st.line==='__all__'){ Object.keys(MATRIX[st.domain].lines).forEach(l=>{ Object.keys(MATRIX[st.domain].lines[l].subs).forEach(sb=>out.push({d:st.domain,l:l,s:sb})); }); }
+  else if(st.sub==='__all__'){ Object.keys(MATRIX[st.domain].lines[st.line].subs).forEach(sb=>out.push({d:st.domain,l:st.line,s:sb})); }
+  else out.push({d:st.domain,l:st.line,s:st.sub});
+  return out; }
+function keyOf(o){ return o.d+'.'+o.l+'.'+o.s; }
+function procOf(key){ return PROC[key]||genericProc(); }
+function volOf(key){ return (st.volumes[key]||0)*(st.period==='month'?12:1); }
+function stepAssist(step,tier){ if(step.m!=='genai')return 0; if(step.t.indexOf(tier)<0)return 0; const c=rc(); const per=step.a==='docqa'?c.docqa:(c[step.a]||1); return (step.q||1)*per; }
+function perCase(proc,tier,loopC){ let g=0; proc.stages.forEach(s=>s.steps.forEach(step=>{g+=stepAssist(step,tier);})); let ag=(proc.agentic&&proc.agentic[tier])?rc()['agentic_'+tier]:0; if(tier==='C') ag*=(loopC||1); return {genai:g,agentic:ag}; }
+function computeFor(proc,vol,aiPct,mixPct,loopC){ const ai=aiPct/100, mix={S:mixPct.S/100,M:mixPct.M/100,C:mixPct.C/100}, pag={S:st.pagS/100,M:st.pagM/100,C:st.pagC/100}; let g=0,a=0,bl=0,T={};
+  ['S','M','C'].forEach(t=>{ const pc=perCase(proc,t,loopC); const gP=(1-pag[t])*pc.genai, aP=pag[t]*pc.agentic; g+=vol*ai*mix[t]*gP; a+=vol*ai*mix[t]*aP; bl+=mix[t]*(gP+aP); T[t]={genai:pc.genai,agentic:pc.agentic,gPer:gP,aPer:aP,blended:gP+aP,mix:mix[t]}; });
+  return {g:g,a:a,total:g+a,perCase:bl,vol:vol,tiers:T}; }
+function effAI(key){ if(st.ovEnable&&isAll()&&st.aiOv[key]!=null) return st.aiOv[key]; return st.ai; }
+function effMix(key){ if(st.ovEnable&&isAll()){ const mp=st.mixOv[key]; if(mp&&mp!=='global'&&MIXPRESET[mp]) return MIXPRESET[mp]; } return {S:st.mixS,M:st.mixM,C:st.mixC}; }
+function computeKey(o){ const key=keyOf(o); const proc=procOf(key); const aiPct=effAI(key); const mixPct=effMix(key); const r=computeFor(proc,volOf(key),aiPct,mixPct,st.loopC); const upl=1+st.reopen/100; r.gBase=r.g; r.aBase=r.a; r.g*=upl; r.a*=upl; r.total=r.g+r.a; r.aiCases=volOf(key)*aiPct/100; r.aiPct=aiPct; r.mixPct=mixPct; r.key=key; r.o=o; r.proc=proc; return r; }
+function computeScope(){ const keys=inScope(); const rows=keys.map(computeKey); let g=0,a=0,vol=0,aiC=0; rows.forEach(r=>{g+=r.g;a+=r.a;vol+=r.vol;aiC+=r.aiCases;}); const total=g+a;
+  return {rows:rows,g:g,a:a,total:total,vol:vol,aiCases:aiC,perCase: vol>0? total/vol : 0}; }
+
+/* ===================== FORMAT ===================== */
+function fmt(n){ n=Math.round(n); if(n>=1e6)return (n/1e6).toFixed(2)+'M'; if(n>=1e3)return (n/1e3).toFixed(1)+'k'; return n.toLocaleString(); }
+function f1(n){ return (Math.round(n*10)/10).toLocaleString(); }
+function fInt(n){ n=Math.round(n); return n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(0)+'k':n.toLocaleString(); }
+const TIERNAME={S:'Simple',M:'Moderate',C:'Complex'};
+const MODEBADGE={ genai:'<span class="badge b-genai">✨ GenAI</span>', agentic:'<span class="badge b-agentic">🤖 Agentic</span>', human:'<span class="badge b-human">👤 Human</span>', system:'<span class="badge b-system">⚙ System</span>' };
+
+/* ===================== RENDER ===================== */
+function render(){
+  st.ai=+document.getElementById('inAI').value||0;
+  st.mixS=+document.getElementById('mixS').value||0; st.mixM=+document.getElementById('mixM').value||0; st.mixC=+document.getElementById('mixC').value||0;
+  st.pagS=+document.getElementById('pagS').value||0; st.pagM=+document.getElementById('pagM').value||0; st.pagC=+document.getElementById('pagC').value||0;
+  document.getElementById('aiVal').textContent=st.ai+'%';
+  function gv(id,d){ var e=document.getElementById(id); return e? e.value : d; }
+  st.reopen=+gv('inReopen',12)||0; st.loopC=+gv('inLoop',1)||1; st.peak=+gv('inPeak',1.5)||1;
+  st.currency=gv('selCur','SGD'); st.unitCost=+gv('inUnit',0)||0; st.manualMin=+gv('inMin',0)||0; st.rate=+gv('inRate',0)||0; st.timeSaved=+gv('inSaved',0)||0; st.entitlement=+gv('inEnt',0)||0;
+  var _x; _x=document.getElementById('reopenV'); if(_x)_x.textContent=st.reopen+'%'; _x=document.getElementById('loopV'); if(_x)_x.textContent=st.loopC.toFixed(1); _x=document.getElementById('peakV'); if(_x)_x.textContent=st.peak.toFixed(1);
+  const sum=st.mixS+st.mixM+st.mixC; document.getElementById('mixWarn').textContent = sum===100?'' : '⚠ mix = '+sum+'% (should be 100)';
+  syncVolInput();
+  const all=isAll(); const R = all? computeScope() : (function(){ const r=computeKey(inScope()[0]); return {rows:[r],g:r.g,a:r.a,total:r.total,vol:r.vol,aiCases:r.aiCases,perCase:(r.vol>0?r.total/r.vol:0)}; })();
+  document.getElementById('kTotal').textContent=fmt(R.total); document.getElementById('kGenai').textContent=fmt(R.g); document.getElementById('kAgentic').textContent=fmt(R.a); document.getElementById('kCase').textContent=f1(R.perCase);
+  const gp=R.total>0?Math.round(R.g/R.total*100):0;
+  document.getElementById('kTotalL').textContent = all? 'Annual assists — scope total' : 'Annual assists — total';
+  document.getElementById('kTotalSub').textContent=fInt(R.vol)+' cases/yr · '+st.ai+'% AI'+(all?(' · '+R.rows.length+' processes'):'');
+  document.getElementById('kGenaiSub').textContent=gp+'% of assists'; document.getElementById('kAgenticSub').textContent=(100-gp)+'% of assists';
+  document.getElementById('kCaseSub').textContent= all? 'volume-weighted, incl. reopen' : 'incl. reopen uplift';
+  if(all){ renderCalcAll(R); renderProcAll(R); renderSumAll(R); }
+  else { const r=R.rows[0]; renderCalc(r); renderProc(r); renderSum(r); }
+  renderROI(R, R.total/12*st.peak);
+}
+
+/* ---- single-process calculator ---- */
+function renderCalc(r){
+  const proc=r.proc; let h='';
+  if(!proc.detailed) h+='<div class="note amber" style="margin-bottom:14px">🚧 <b>Scaffold sub-process.</b> '+proc.summary+' Numbers below are illustrative until detailed.</div>';
+  h+='<div class="tierwrap">';
+  ['S','M','C'].forEach(t=>{ const T=r.tiers[t];
+    h+='<div class="tier t-'+t+'"><h4>'+TIERNAME[t]+' <span class="mix">'+Math.round(T.mix*100)+'% of volume</span></h4>'
+      +'<div class="pcrow pc-g"><span>✨ GenAI skills / case</span><b>'+f1(T.genai)+'</b></div>'
+      +'<div class="pcrow pc-a"><span>🤖 Agentic run / case</span><b>'+(T.agentic?f1(T.agentic):'—')+'</b></div>'
+      +'<div class="pcrow"><span style="color:var(--muted)">% via agent</span><b style="color:var(--muted)">'+st['pag'+t]+'%</b></div>'
+      +'<div class="pcrow pc-bl"><span><b>Blended / case</b></span><b>'+f1(T.blended)+'</b></div></div>'; });
+  h+='</div>';
+  h+='<table class="steps"><thead><tr><th>Process step</th><th>Action</th><th>Mode</th><th class="c">Occ.</th><th class="c">S · M · C</th><th class="c">Assists / case</th></tr></thead><tbody>';
+  proc.stages.forEach(s=>{ h+='<tr class="stage-h"><td colspan="6">'+s.name+'</td></tr>';
+    s.steps.forEach(step=>{ const dots=['S','M','C'].map(t=>'<span class="dot '+(step.t.indexOf(t)>=0?'on-'+t:'off')+'">'+t+'</span>').join('');
+      let av='—'; if(step.m==='genai'){ const t=step.t.indexOf('C')>=0?'C':(step.t.indexOf('M')>=0?'M':'S'); av=f1(stepAssist(step,t)); }
+      h+='<tr><td class="sn">'+step.n+'</td><td>'+(ACT_LABEL[step.a]||step.a)+'</td><td>'+MODEBADGE[step.m]+'</td><td class="c">'+(step.m==='genai'?(step.q||1):'—')+'</td><td class="c"><span class="tier-dots">'+dots+'</span></td><td class="c '+(step.m==='genai'?'asst':'')+'">'+av+'</td></tr>'; }); });
+  ['M','C'].forEach(t=>{ if(proc.agentic&&proc.agentic[t]){ h+='<tr><td class="sn">🤖 Multi-agent orchestration ('+TIERNAME[t]+' — intake→verify→decide→act with supervisor retries)</td><td>Orchestration</td><td>'+MODEBADGE.agentic+'</td><td class="c">1 run</td><td class="c"><span class="dot on-'+t+'">'+t+'</span></td><td class="c asst" style="color:var(--purple)">'+f1(rc()['agentic_'+t])+'</td></tr>'; }});
+  h+='</tbody></table>';
+  h+='<div class="note">Formula: <b>annual assists = volume × %AI-touched × Σ( mix<sub>tier</sub> × [ (1−%agent)×GenAI/case + %agent×agentic/case ] )</b>. GenAI and agentic are metered separately because agentic executions are far heavier per case.</div>';
+  document.getElementById('tab-calc').innerHTML=h;
+}
+function renderProc(r){
+  const proc=r.proc; let h='<div class="panel" style="margin-bottom:14px"><div class="p-title">'+MATRIX[st.domain].label+' · '+MATRIX[st.domain].lines[st.line].label+' · '+MATRIX[st.domain].lines[st.line].subs[st.sub]+(proc.detailed?'':' <span class="badge b-prov" style="margin-left:6px">Scaffold</span>')+'</div><div class="p-sub" style="margin-top:6px;font-size:12px">'+proc.summary+'</div></div>';
+  h+='<div class="legend"><span><span class="lg-sw" style="background:var(--teal)"></span> AI-driven · GenAI skill</span><span><span class="lg-sw" style="background:var(--purple)"></span> AI-driven · Agentic</span><span><span class="lg-sw" style="background:var(--red)"></span> Human-assisted</span><span><span class="lg-sw" style="background:var(--faint)"></span> System / integration</span></div>';
+  proc.stages.forEach((s,i)=>{ h+='<div class="flow-stage"><div class="fs-head"><span class="num">'+(i+1)+'</span>'+s.name+'</div><div class="fs-body">';
+    s.steps.forEach((step,j)=>{ let av=''; if(step.m==='genai'){ const t=step.t.indexOf('C')>=0?'C':(step.t.indexOf('M')>=0?'M':'S'); av=f1(stepAssist(step,t))+' ⚡'; } else av='0';
+      const tch=['S','M','C'].filter(t=>step.t.indexOf(t)>=0).map(t=>TIERNAME[t][0]).join('·');
+      h+='<div class="step m-'+step.m+'"><div class="st-as">'+av+'</div><div class="st-n">'+step.n+'</div><div class="st-meta">'+MODEBADGE[step.m]+'<span class="badge b-act">'+(ACT_LABEL[step.a]||step.a)+'</span><span class="badge b-system">'+tch+'</span></div></div>';
+      if(j<s.steps.length-1) h+='<span class="arrow">→</span>'; });
+    h+='</div></div>'; });
+  let agt=[]; ['M','C'].forEach(t=>{ if(proc.agentic&&proc.agentic[t]) agt.push(TIERNAME[t]+' = '+f1(rc()['agentic_'+t])+' assists/run'); });
+  if(agt.length) h+='<div class="agentic-band">🤖 <b>Agentic orchestration layer</b> — for '+agt.join(' · ')+'. A single orchestrated execution subsumes the internal skill calls and is metered as one heavier agentic action, scaling with case complexity.</div>';
+  document.getElementById('tab-proc').innerHTML=h;
+}
+function renderSum(r){
+  let h='<div class="panel"><div class="p-title">📊 Selected sub-process — annual assist demand</div><div class="p-sub">GenAI vs agentic split by complexity tier.</div><div style="margin-top:14px">';
+  const max=Math.max(r.tiers.S.blended,r.tiers.M.blended,r.tiers.C.blended,.001);
+  ['S','M','C'].forEach(t=>{ const T=r.tiers[t]; const tot=T.blended; const w=tot/max*100; const gw=tot>0?T.gPer/tot*100:0;
+    h+='<div class="bar-row"><div class="bn">'+TIERNAME[t]+'</div><div class="bar-track" style="width:'+Math.max(w,2)+'%"><div class="bar-g" style="width:'+gw+'%"></div><div class="bar-a" style="width:'+(100-gw)+'%"></div></div><div class="bv">'+f1(tot)+'/case</div></div>'; });
+  h+='</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px">'
+    +'<div class="rc-item"><label>Annual GenAI assists</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--teal-d)">'+fmt(r.g)+'</div></div>'
+    +'<div class="rc-item"><label>Annual agentic assists</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--purple)">'+fmt(r.a)+'</div></div>'
+    +'<div class="rc-item"><label>Annual total</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--navy)">'+fmt(r.total)+'</div></div></div>';
+  h+='<div class="note">Switch the business line or sub-process to <b>All</b> for a full line / domain roll-up. Reopen, appeal and seasonality factors plus the annual burn-down pool are added in Stage 3.</div></div>';
+  document.getElementById('tab-sum').innerHTML=h;
+}
+
+/* ---- ALL-mode roll-up ---- */
+function scopeTitle(){ return st.line==='__all__' ? (MATRIX[st.domain].label+' — all business lines') : (MATRIX[st.domain].label+' · '+MATRIX[st.domain].lines[st.line].label+' — all sub-processes'); }
+function renderCalcAll(R){
+  const ov=st.ovEnable; const span=ov?10:8;
+  let h='<div class="panel" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><div class="p-title">🧮 '+scopeTitle()+'</div><div class="p-sub">Per-process volumes are editable below. Enable overrides to set %AI-touched and complexity mix per process; otherwise the global values apply.</div></div><label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;cursor:pointer"><input type="checkbox" id="ovEnable" '+(ov?'checked':'')+' onchange="toggleOv(this)" style="width:16px;height:16px;accent-color:var(--blue)"> per-process overrides</label></div></div>';
+  h+='<table class="steps"><thead><tr><th>Process</th><th></th><th class="r">Cases / yr</th>'+(ov?'<th class="r">%AI</th><th class="c">Mix</th>':'')+'<th class="r">Blended / case</th><th class="r">✨ GenAI</th><th class="r">🤖 Agentic</th><th class="r">Total</th><th class="r">% of total</th></tr></thead><tbody>';
+  let curLine='';
+  R.rows.forEach(function(r){ const o=r.o;
+    if(st.line==='__all__' && o.l!==curLine){ curLine=o.l; h+='<tr class="grp-h"><td colspan="'+span+'">'+MATRIX[o.d].lines[o.l].label+'</td></tr>'; }
+    const nm=MATRIX[o.d].lines[o.l].subs[o.s]; const pct=R.total>0?(r.total/R.total*100):0; const rawVol=st.volumes[r.key]||0;
+    let ovCells='';
+    if(ov){ const mp=st.mixOv[r.key]||'global';
+      const opts=['global','simple','balanced','complex'].map(function(k){ const lbl=k==='global'?'Global':(k.charAt(0).toUpperCase()+k.slice(1)); return '<option value="'+k+'"'+(mp===k?' selected':'')+'>'+lbl+'</option>'; }).join('');
+      ovCells='<td class="r"><input class="vol-in" style="width:62px!important" type="number" min="0" max="100" value="'+r.aiPct+'" data-k="'+r.key+'" onchange="setAI(this.dataset.k,this.value)"></td><td class="c"><select style="font-size:11px;padding:4px 6px;width:118px" data-k="'+r.key+'" onchange="setMixOv(this.dataset.k,this.value)">'+opts+'</select></td>';
+    }
+    h+='<tr><td class="sn">'+nm+'</td><td>'+(r.proc.detailed?'<span class="badge b-star">★</span>':'<span class="badge b-prov">scaffold</span>')+'</td><td class="r"><input class="vol-in" type="number" min="0" value="'+rawVol+'" data-k="'+r.key+'" onchange="setVol(this.dataset.k,this.value)"></td>'+ovCells+'<td class="r">'+f1(r.vol>0?r.total/r.vol:0)+'</td><td class="r" style="color:var(--teal-d)">'+fmt(r.g)+'</td><td class="r" style="color:var(--purple)">'+fmt(r.a)+'</td><td class="r asst">'+fmt(r.total)+'</td><td class="r">'+pct.toFixed(1)+'%</td></tr>';
+  });
+  h+='<tr class="tot"><td>SCOPE TOTAL</td><td></td><td class="r">'+fInt(R.vol)+'</td>'+(ov?'<td></td><td></td>':'')+'<td class="r">'+f1(R.perCase)+'</td><td class="r">'+fmt(R.g)+'</td><td class="r">'+fmt(R.a)+'</td><td class="r"><span class="asst">'+fmt(R.total)+'</span></td><td class="r">100%</td></tr>';
+  h+='</tbody></table>';
+  h+='<div class="note amber">Volumes are planning-grade defaults — replace with real book figures. Reopen uplift of '+st.reopen+'% is included in totals; the period toggle applies to every row.</div>';
+  document.getElementById('tab-calc').innerHTML=h;
+}
+function renderProcAll(R){
+  let h='<div class="panel" style="margin-bottom:14px"><div class="p-title">🗺️ '+scopeTitle()+'</div><div class="p-sub">Select a process to open its full stage-by-stage flow. ★ processes carry full detail; scaffolds are completed in the next Stage 2 batch.</div></div>';
+  h+='<div class="idx-grid">';
+  R.rows.forEach(r=>{ const o=r.o; const nm=MATRIX[o.d].lines[o.l].subs[o.s];
+    h+='<div class="idx-card" onclick="pick(\''+o.l+'\',\''+o.s+'\')"><div class="ic-n">'+nm+'</div>'
+      +(r.proc.detailed?'<span class="badge b-star">★ detailed</span>':'<span class="badge b-prov">scaffold</span>')
+      +'<div class="ic-m"><span>Blended/case</span><span class="asst">'+f1(r.vol>0?r.total/r.vol:0)+'</span></div>'
+      +'<div class="ic-m"><span>S · M · C</span><span>'+f1(r.tiers.S.blended)+' · '+f1(r.tiers.M.blended)+' · '+f1(r.tiers.C.blended)+'</span></div>'
+      +'<div class="ic-m" style="color:var(--blue);font-weight:700;margin-top:10px">View flow →</div></div>'; });
+  h+='</div>';
+  document.getElementById('tab-proc').innerHTML=h;
+}
+function renderSumAll(R){
+  let h='<div class="panel"><div class="p-title">📊 '+scopeTitle()+' — annual assist roll-up</div><div class="p-sub">Contribution by process, GenAI (teal) vs agentic (purple). Grouped by business line.</div>';
+  const max=Math.max.apply(null,R.rows.map(r=>r.total).concat([1]));
+  let curLine='', lineTot=0;
+  // group bars
+  let curL='';
+  R.rows.forEach((r,i)=>{ const o=r.o;
+    if(o.l!==curL){ curL=o.l; h+='<div class="grp-lbl">'+MATRIX[o.d].lines[o.l].label+'</div>'; }
+    const nm=MATRIX[o.d].lines[o.l].subs[o.s]; const w=r.total/max*100; const gw=r.total>0?r.g/r.total*100:0;
+    h+='<div class="bar-row"><div class="bn">'+nm+'</div><div class="bar-track" style="width:'+Math.max(w,2)+'%"><div class="bar-g" style="width:'+gw+'%"></div><div class="bar-a" style="width:'+(100-gw)+'%"></div></div><div class="bv">'+fmt(r.total)+'</div></div>'; });
+  // totals row
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px">'
+    +'<div class="rc-item"><label>Processes in scope</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--navy)">'+R.rows.length+'</div></div>'
+    +'<div class="rc-item"><label>GenAI assists / yr</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--teal-d)">'+fmt(R.g)+'</div></div>'
+    +'<div class="rc-item"><label>Agentic assists / yr</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--purple)">'+fmt(R.a)+'</div></div>'
+    +'<div class="rc-item" style="background:var(--navy)"><label style="color:rgba(255,255,255,.7)">TOTAL assists / yr</label><div style="font-family:var(--serif);font-size:20px;font-weight:700;color:#fff">'+fmt(R.total)+'</div></div></div>';
+  const gp=R.total>0?Math.round(R.g/R.total*100):0;
+  h+='<div class="note">Across this scope, agentic execution drives <b>'+(100-gp)+'%</b> of assist demand from a minority of complex cases — consistent with ServiceNow\'s guidance that AI Agents dominate consumption. Reopen / seasonality factors, ROI and the burn-down pool view land in Stage 3.</div></div>';
+  document.getElementById('tab-sum').innerHTML=h;
+}
+
+function renderROI(R, peak){
+  const sym=CURSYM[st.currency]||(st.currency+' ');
+  function money(x){ return sym+Math.round(x).toLocaleString(); }
+  const notes=(document.getElementById('assumeText')||{value:''}).value.trim();
+  const assistCost=R.total*st.unitCost;
+  const hours=R.aiCases*(st.manualMin/60)*(st.timeSaved/100);
+  const labour=hours*st.rate;
+  const net=labour-assistCost;
+  const roi=assistCost>0?(net/assistCost*100):null;
+  let h = notes? ('<div class="note" style="margin-bottom:14px"><b>Assumptions:</b> '+notes.replace(/</g,'&lt;').replace(/\n/g,' · ')+'</div>') : '';
+  h+='<div class="panel" style="margin-bottom:14px"><div class="p-title">Value &amp; cost — annual ('+st.currency+')</div><div class="p-sub">Based on '+fInt(R.aiCases)+' AI-touched cases/yr at the assumptions above. Reopen uplift of '+st.reopen+'% is included in assist volume.</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px">';
+  h+='<div class="rc-item"><label>Assists / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy)">'+fmt(R.total)+'</div></div>';
+  h+='<div class="rc-item"><label>Assist cost / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--purple)">'+money(assistCost)+'</div></div>';
+  h+='<div class="rc-item"><label>Fulfiller hours saved</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy)">'+fInt(hours)+'</div></div>';
+  h+='<div class="rc-item"><label>Labour value / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--teal-d)">'+money(labour)+'</div></div>';
+  h+='<div class="rc-item" style="background:var(--navy)"><label style="color:rgba(255,255,255,.7)">Net value / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:'+(net>=0?'var(--green)':'#ff8a8a')+'">'+money(net)+'</div></div>';
+  h+='</div>';
+  if(roi!=null) h+='<div class="note">Indicative ROI on assist spend: <b>'+Math.round(roi).toLocaleString()+'%</b> ('+money(net)+' net on '+money(assistCost)+' assist cost). Adjust the assumptions to match your contracted rate and operating baseline.</div>';
+  h+='</div>';
+  const ent=st.entitlement, proj=R.total; const util=ent>0?proj/ent*100:null; const head=ent-proj; const ex=(ent>0&&proj>ent)?(ent/(proj/12)):null;
+  h+='<div class="panel"><div class="p-title">Annual burn-down pool</div>';
+  if(ent<=0){ h+='<div class="note amber" style="margin-top:12px">Enter your purchased <b>annual assist pool</b> above to see utilisation, headroom and projected exhaustion. The pool resets annually and is shared across the product line.</div>'; }
+  else {
+    const cap=Math.min(util,100);
+    h+='<div class="p-sub" style="margin-top:6px">Projected consumption vs purchased pool. Pool resets annually; sub-products draw from the same pool.</div>';
+    h+='<div style="margin-top:14px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px"><span>Utilisation</span><span style="color:'+(util>100?'var(--red)':'var(--green-d)')+'">'+Math.round(util)+'%</span></div>';
+    h+='<div class="bar-track" style="height:26px"><div style="height:100%;width:'+cap+'%;background:'+(util>100?'var(--red)':'linear-gradient(90deg,var(--teal),var(--green-d))')+'"></div></div></div>';
+    h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px">'
+      +'<div class="rc-item"><label>Entitlement / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy)">'+fmt(ent)+'</div></div>'
+      +'<div class="rc-item"><label>Projected / yr</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--purple)">'+fmt(proj)+'</div></div>'
+      +'<div class="rc-item"><label>'+(head>=0?'Headroom':'Overage')+'</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:'+(head>=0?'var(--green-d)':'var(--red)')+'">'+fmt(Math.abs(head))+'</div></div>'
+      +'<div class="rc-item"><label>Est. exhaustion</label><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy)">'+(ex!=null?('~month '+Math.max(1,Math.floor(ex))):'within year')+'</div></div></div>';
+    if(util>100) h+='<div class="note amber">Projected consumption exceeds the pool by <b>'+fmt(-head)+'</b> assists ('+Math.round(util-100)+'% over). Consider a larger pool, tighter agent routing, or loop caps.</div>';
+    else h+='<div class="note">Peak-month load ≈ <b>'+fmt(peak)+'</b> assists (×'+st.peak.toFixed(1)+'). Even-burn headroom is '+Math.round(100-util)+'%.</div>';
+  }
+  h+='</div>';
+  document.getElementById('roiResults').innerHTML=h;
+}
+/* ===================== RATE CARD ===================== */
+function buildRateCard(){ const card=rc(); const keys=['extraction','classification','reasoning','summarization','communication','docqa','agentic_S','agentic_M','agentic_C'];
+  const lbl={extraction:'Extraction',classification:'Classification',reasoning:'Reasoning',summarization:'Summarization',communication:'Communication',docqa:'Doc-Q&A / RAG',agentic_S:'Agentic · Simple',agentic_M:'Agentic · Moderate',agentic_C:'Agentic · Complex'};
+  let h=''; keys.forEach(k=>{ h+='<div class="rc-item"><label>'+lbl[k]+'</label><input type="number" min="0" step="1" value="'+card[k]+'" oninput="RATE[\''+st.scale+'\'][\''+k+'\']=+this.value||0;render()"></div>'; });
+  document.getElementById('rateCard').innerHTML=h; document.getElementById('rcScaleLbl').textContent = st.scale==='y2026'?'2026 AI-native':'Legacy'; }
+
+/* ===================== NAV ===================== */
+function fillDomain(){ const s=document.getElementById('selDomain'); s.innerHTML=''; Object.keys(MATRIX).forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=MATRIX[d].label; if(d===st.domain)o.selected=true; s.appendChild(o); }); }
+function fillLine(){ const s=document.getElementById('selLine'); s.innerHTML=''; const oa=document.createElement('option'); oa.value='__all__'; oa.textContent='★ All business lines'; if(st.line==='__all__')oa.selected=true; s.appendChild(oa);
+  const lines=MATRIX[st.domain].lines; Object.keys(lines).forEach(l=>{ const o=document.createElement('option'); o.value=l; o.textContent=lines[l].label; if(l===st.line)o.selected=true; s.appendChild(o); }); }
+function fillSub(){ const s=document.getElementById('selSub'); s.innerHTML='';
+  if(st.line==='__all__'){ const o=document.createElement('option'); o.value='__all__'; o.textContent='★ All sub-processes'; o.selected=true; s.appendChild(o); s.disabled=true; return; }
+  s.disabled=false; const oa=document.createElement('option'); oa.value='__all__'; oa.textContent='★ All sub-processes'; if(st.sub==='__all__')oa.selected=true; s.appendChild(oa);
+  const subs=MATRIX[st.domain].lines[st.line].subs; Object.keys(subs).forEach(sb=>{ const o=document.createElement('option'); o.value=sb; const det=PROC[st.domain+'.'+st.line+'.'+sb]; o.textContent=subs[sb]+(det&&det.detailed?'  ★':''); if(sb===st.sub)o.selected=true; s.appendChild(o); }); }
+
+document.getElementById('selDomain').addEventListener('change',function(){ st.domain=this.value; st.line=Object.keys(MATRIX[st.domain].lines)[0]; st.sub=Object.keys(MATRIX[st.domain].lines[st.line].subs)[0]; fillLine(); fillSub(); render(); });
+document.getElementById('selLine').addEventListener('change',function(){ st.line=this.value; if(st.line==='__all__'){ st.sub='__all__'; } else { st.sub=Object.keys(MATRIX[st.domain].lines[st.line].subs)[0]; } fillSub(); render(); });
+document.getElementById('selSub').addEventListener('change',function(){ st.sub=this.value; render(); });
+function pick(l,s){ st.line=l; st.sub=s; fillLine(); fillSub(); tabTo('proc',document.querySelector('.tab[data-t=proc]')); render(); }
+
+document.querySelectorAll('#segScale button').forEach(b=> b.addEventListener('click',function(){ document.querySelectorAll('#segScale button').forEach(x=>x.classList.remove('on')); this.classList.add('on'); st.scale=this.dataset.v;
+  document.getElementById('scaleNote').textContent = st.scale==='y2026' ? 'Simple ≈ 1 · doc-Q&A ≈ 10 · agentic 25–150 by tier. Editable below.' : 'Legacy community scale: simple skill ≈ 1 · agentic run ≈ 25 (flat). Editable below.';
+  buildRateCard(); render(); }));
+document.querySelectorAll('#segPeriod button').forEach(b=> b.addEventListener('click',function(){ document.querySelectorAll('#segPeriod button').forEach(x=>x.classList.remove('on')); this.classList.add('on'); st.period=this.dataset.v; render(); }));
+
+function onMainVol(){ if(!isAll()){ st.volumes[keyOf(inScope()[0])]=+document.getElementById('inVol').value||0; } render(); }
+function setVol(key,val){ st.volumes[key]=+val||0; render(); }
+function toggleOv(el){ st.ovEnable=el.checked; render(); }
+function setAI(key,val){ st.aiOv[key]=Math.max(0,Math.min(100,+val||0)); render(); }
+function setMixOv(key,val){ st.mixOv[key]=val; render(); }
+function syncVolInput(){ const el=document.getElementById('inVol'); const nl=document.getElementById('volNote');
+  if(isAll()){ el.disabled=true; let tot=0; inScope().forEach(o=>tot+=(st.volumes[keyOf(o)]||0)); el.value=tot; nl.innerHTML='Σ across <b>'+inScope().length+'</b> processes — edit each in the Calculator table.'; }
+  else { el.disabled=false; el.value=st.volumes[keyOf(inScope()[0])]||0; nl.textContent='Total cases — interpreted as '+(st.period==='month'?'monthly (×12 → annual).':'annual.'); } }
+
+function preset(s,m,c){ document.getElementById('mixS').value=s; document.getElementById('mixM').value=m; document.getElementById('mixC').value=c; render(); }
+function tabTo(t,btn){ st.tab=t; document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on')); if(btn)btn.classList.add('on'); ['calc','proc','sum','roi'].forEach(x=> document.getElementById('tab-'+x).style.display = x===t?'block':'none'); }
+
+var LOGO_PNG=null;
+(function(){ try{
+  var el=document.querySelector('.sn-logo'); if(!el) return;
+  var svg=new XMLSerializer().serializeToString(el);
+  var uri='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  var img=new Image();
+  img.onload=function(){ try{ var sc=3; var cv=document.createElement('canvas'); cv.width=132*sc; cv.height=20*sc; var ctx=cv.getContext('2d'); ctx.drawImage(img,0,0,132*sc,20*sc); LOGO_PNG=cv.toDataURL('image/png'); }catch(e){} };
+  img.src=uri;
+}catch(e){} })();
+
+function computeCurrent(){ const all=isAll(); const R = all? computeScope() : (function(){ const r=computeKey(inScope()[0]); return {rows:[r],g:r.g,a:r.a,total:r.total,vol:r.vol,aiCases:r.aiCases,perCase:(r.vol>0?r.total/r.vol:0)}; })(); return {all:all,R:R}; }
+
+function generatePDF(){
+  if(!window.jspdf || !window.jspdf.jsPDF){ alert("PDF engine is still loading. Wait a moment and try again, or open this file directly in a browser."); return; }
+  const JsPDF = window.jspdf.jsPDF;
+  const doc = new JsPDF({unit:'pt', format:'a4'});
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = 40;
+  function money(x){ return st.currency+" "+Math.round(x).toLocaleString(); }
+  function n(x){ return Math.round(x).toLocaleString(); }
+  function f1(x){ return (Math.round(x*10)/10).toLocaleString(); }
+  const cc = computeCurrent(); const all=cc.all; const R=cc.R; const peak=R.total/12*st.peak;
+  const notes=(document.getElementById('assumeText')||{value:''}).value.trim();
+  const account=(document.getElementById('acctName')||{value:''}).value.trim();
+  let scopeLabel;
+  if(st.line==='__all__') scopeLabel = MATRIX[st.domain].label+" - all business lines, all sub-processes";
+  else if(st.sub==='__all__') scopeLabel = MATRIX[st.domain].label+" / "+MATRIX[st.domain].lines[st.line].label+" - all sub-processes";
+  else scopeLabel = MATRIX[st.domain].label+" / "+MATRIX[st.domain].lines[st.line].label+" / "+MATRIX[st.domain].lines[st.line].subs[st.sub];
+  const dt = new Date().toISOString().slice(0,10);
+
+  doc.setFillColor(3,45,66); doc.rect(0,0,W,78,'F');
+  if(LOGO_PNG){ try{ doc.addImage(LOGO_PNG,'PNG', M, 16, 92, 13.9); }catch(e){ doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text("servicenow", M, 30); } }
+  else { doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.text("servicenow", M, 30); }
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.text("FSI Assist Calculator", M, 52);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(150,225,180); doc.text("Now Assist consumption estimate - GenAI + Agentic", M, 66);
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+  if(account){ doc.text("Prepared for: "+account, W-M, 28, {align:'right'}); doc.text(dt, W-M, 42, {align:'right'}); }
+  else { doc.text(dt, W-M, 28, {align:'right'}); }
+
+  let y=98;
+  doc.setTextColor(3,45,66); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(scopeLabel, M, y); y+=8;
+  doc.setDrawColor(220); doc.line(M,y,W-M,y); y+=18;
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text("Annual assist demand", M, y); y+=15;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(40,60,75);
+  const gp=R.total>0?Math.round(R.g/R.total*100):0;
+  [ "Total assists / year:   "+n(R.total),
+    "GenAI skills:   "+n(R.g)+"   ("+gp+"%)",
+    "Agentic execution:   "+n(R.a)+"   ("+(100-gp)+"%)",
+    "Blended assists / case:   "+f1(R.perCase),
+    "Cases / year in scope:   "+n(R.vol)+"      AI-touched:   "+n(R.aiCases)
+  ].forEach(function(l){ doc.text(l,M,y); y+=14; });
+  y+=10;
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(3,45,66); doc.text("GenAI vs Agentic split of annual assists", M, y); y+=8;
+  var _bx=M, _bw=W-2*M, _bh=16, _gw=R.total>0?_bw*(R.g/R.total):0;
+  doc.setFillColor(0,199,177); doc.rect(_bx,y,_gw,_bh,'F');
+  doc.setFillColor(124,58,237); doc.rect(_bx+_gw,y,_bw-_gw,_bh,'F');
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
+  if(_gw>72) doc.text("GenAI "+gp+"%", _bx+6, y+11);
+  if((_bw-_gw)>72) doc.text("Agentic "+(100-gp)+"%", _bx+_gw+6, y+11);
+  y+=_bh+11;
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(40,60,75);
+  doc.text("GenAI skills: "+n(R.g)+"      Agentic execution: "+n(R.a), M, y); y+=16;
+
+  const params=[
+    ['Assist scale', st.scale==='y2026'?'2026 AI-native':'Legacy'],
+    ['Volume basis', st.period==='month'?'Monthly (annualised x12)':'Annual'],
+    ['% AI-touched (global)', st.ai+'%'],
+    ['Complexity mix S/M/C', st.mixS+' / '+st.mixM+' / '+st.mixC+' %'],
+    ['% via agent S/M/C', st.pagS+' / '+st.pagM+' / '+st.pagC+' %'],
+    ['Reopen / rework uplift', st.reopen+'%'],
+    ['Complex reflection-loop', 'x'+st.loopC.toFixed(1)],
+    ['Peak-month factor', 'x'+st.peak.toFixed(1)],
+    ['Per-process overrides', (st.ovEnable&&all)?'Enabled':'Off']
+  ];
+  doc.autoTable({ startY:y, head:[['Modelling assumption','Value']], body:params, margin:{left:M,right:M}, theme:'grid',
+    headStyles:{fillColor:[3,45,66],textColor:255,fontSize:9}, bodyStyles:{fontSize:9,textColor:[40,60,75]}, columnStyles:{0:{cellWidth:230,fontStyle:'bold'}} });
+  y=doc.lastAutoTable.finalY+18;
+
+  const assistCost=R.total*st.unitCost, hours=R.aiCases*(st.manualMin/60)*(st.timeSaved/100), labour=hours*st.rate, net=labour-assistCost, roi=assistCost>0?(net/assistCost*100):null;
+  const roiBody=[
+    ['Cost per assist ('+st.currency+')', st.currency+' '+st.unitCost],
+    ['Assist cost / year', money(assistCost)],
+    ['Manual handling / case', st.manualMin+' min'],
+    ['Fulfiller loaded cost / hr', money(st.rate)],
+    ['Time saved on AI-touched', st.timeSaved+'%'],
+    ['Fulfiller hours saved / year', n(hours)],
+    ['Labour value / year', money(labour)],
+    ['Net value / year', money(net)],
+    ['Indicative ROI on assist spend', roi!=null?(Math.round(roi).toLocaleString()+'%'):'n/a']
+  ];
+  if(st.entitlement>0){ const util=R.total/st.entitlement*100, hd=st.entitlement-R.total;
+    roiBody.push(['Annual assist pool (entitlement)', n(st.entitlement)]);
+    roiBody.push(['Pool utilisation', Math.round(util)+'%']);
+    roiBody.push([hd>=0?'Headroom':'Overage', n(Math.abs(hd))]);
+    roiBody.push(['Peak-month load (x'+st.peak.toFixed(1)+')', n(peak)]);
+  }
+  if(y>700){ doc.addPage(); y=50; }
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(3,45,66); doc.text("Value, cost & pool ("+st.currency+")", M, y);
+  doc.autoTable({ startY:y+8, head:[['Metric','Value']], body:roiBody, margin:{left:M,right:M}, theme:'grid',
+    headStyles:{fillColor:[0,157,142],textColor:255,fontSize:9}, bodyStyles:{fontSize:9,textColor:[40,60,75]}, columnStyles:{0:{cellWidth:260,fontStyle:'bold'}} });
+  y=doc.lastAutoTable.finalY+18;
+
+  if(all){
+    if(y>620){ doc.addPage(); y=50; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(3,45,66); doc.text("Per-process breakdown", M, y);
+    const rows=R.rows.map(function(r){ const o=r.o; return [ MATRIX[o.d].lines[o.l].label, MATRIX[o.d].lines[o.l].subs[o.s], n(r.vol), f1(r.vol>0?r.total/r.vol:0), n(r.g), n(r.a), n(r.total) ]; });
+    rows.push(['','SCOPE TOTAL', n(R.vol), f1(R.perCase), n(R.g), n(R.a), n(R.total)]);
+    doc.autoTable({ startY:y+8, head:[['Line','Sub-process','Cases/yr','Per case','GenAI','Agentic','Total']], body:rows, margin:{left:M,right:M}, theme:'striped',
+      headStyles:{fillColor:[3,45,66],textColor:255,fontSize:8}, bodyStyles:{fontSize:8,textColor:[40,60,75]},
+      didParseCell:function(d){ if(d.section==='body' && d.row.index===rows.length-1){ d.cell.styles.fontStyle='bold'; d.cell.styles.fillColor=[238,243,246]; } } });
+    y=doc.lastAutoTable.finalY+18;
+  } else {
+    const r=R.rows[0];
+    if(y>620){ doc.addPage(); y=50; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(3,45,66); doc.text("Per-case build-up by complexity", M, y);
+    const TN={S:'Simple',M:'Moderate',C:'Complex'};
+    const tb=['S','M','C'].map(function(t){ const T=r.tiers[t]; return [ TN[t], Math.round(T.mix*100)+'%', f1(T.genai), T.agentic?f1(T.agentic):'-', f1(T.blended) ]; });
+    doc.autoTable({ startY:y+8, head:[['Tier','% of vol','GenAI/case','Agentic/run','Blended/case']], body:tb, margin:{left:M,right:M}, theme:'grid',
+      headStyles:{fillColor:[3,45,66],textColor:255,fontSize:9}, bodyStyles:{fontSize:9,textColor:[40,60,75]} });
+    y=doc.lastAutoTable.finalY+18;
+  }
+
+  if(notes){ if(y>700){ doc.addPage(); y=50; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(3,45,66); doc.text("Engagement assumptions / notes", M, y); y+=14;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(40,60,75);
+    const wn=doc.splitTextToSize(notes, W-2*M); doc.text(wn, M, y); y+=wn.length*12+10;
+  }
+
+  if(y>610){ doc.addPage(); y=50; }
+  doc.setDrawColor(220); doc.line(M,y,W-M,y); y+=14;
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(150,90,10); doc.text("Important disclaimers", M, y); y+=12;
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(95,95,95);
+  const disc=[
+    "This document is a planning-grade estimate generated for internal pre-sales sizing. It is NOT a quote, offer, or commitment, and does not represent contracted pricing.",
+    "Assist intensities, agentic tiers, and the cost per assist are configurable assumptions entered by the user. They must be validated against the current ServiceNow assist rate card and the applicable commercial construct before use with a customer.",
+    "Case volumes are user-supplied planning figures. Actual Now Assist consumption depends on real volumes, adoption, model and version token-to-assist normalisation, agent routing, and loop controls. Errors and guardrail-blocked calls are not metered in production.",
+    "ROI, labour-value and burn-down figures are illustrative and derived solely from the assumptions shown above. ServiceNow makes no representation or warranty as to outcomes.",
+    "ServiceNow models the orchestration layer only (intake, integration calls, summarisation, decisioning, notification). Core source-system processing is out of scope.",
+    "Always review output against the ServiceNow Brand Center (brandcenter.servicenow.com) and confirm all figures with the ServiceNow pricing desk. (c) 2026 ServiceNow, Inc. All rights reserved."
+  ];
+  disc.forEach(function(d){ const w=doc.splitTextToSize("- "+d, W-2*M); doc.text(w, M, y); y+=w.length*9+3; });
+
+  const pages=doc.internal.getNumberOfPages();
+  for(let p=1;p<=pages;p++){ doc.setPage(p); doc.setFontSize(7); doc.setTextColor(150);
+    doc.text("ServiceNow FSI Assist Calculator - "+dt+" - Planning estimate, not a quote", M, H-20);
+    doc.text(p+" / "+pages, W-M, H-20, {align:'right'}); }
+
+  doc.save("FSI_Assist_Estimate_"+st.domain+"_"+(st.line==='__all__'?'all':st.line)+"_"+dt+".pdf");
+}
+
+/* INIT */
+fillDomain(); fillLine(); fillSub(); buildRateCard(); render();
+</script>
+</body>
+</html>

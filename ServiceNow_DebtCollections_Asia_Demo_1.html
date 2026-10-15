@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiceNow | Modern Debt Collections – Asia Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sn-navy: #0a1628;
+  --sn-dark: #0f1f3d;
+  --sn-mid: #162447;
+  --sn-card: #1a2d52;
+  --sn-border: #243a6a;
+  --sn-green: #00d4aa;
+  --sn-green-dim: rgba(0,212,170,0.12);
+  --sn-blue: #4fc3f7;
+  --sn-blue-dim: rgba(79,195,247,0.12);
+  --sn-amber: #ffb74d;
+  --sn-amber-dim: rgba(255,183,77,0.12);
+  --sn-red: #ef5350;
+  --sn-red-dim: rgba(239,83,80,0.12);
+  --sn-purple: #7c4dff;
+  --sn-text: #e8f0fe;
+  --sn-muted: #8fa3c8;
+  --sn-subtle: #4a6090;
+  --sidebar-w: 220px;
+  --header-h: 52px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--sn-navy);
+  color: var(--sn-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── TOP NAV ─── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--header-h);
+  background: var(--sn-dark);
+  border-bottom: 1px solid var(--sn-border);
+  display: flex; align-items: center; gap: 0;
+}
+.topnav-logo {
+  width: var(--sidebar-w);
+  padding: 0 20px;
+  display: flex; align-items: center; gap: 10px;
+  border-right: 1px solid var(--sn-border);
+  height: 100%;
+  flex-shrink: 0;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--sn-green), var(--sn-blue));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--sn-navy);
+}
+.logo-text { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--sn-text); letter-spacing: -0.3px; }
+.logo-sub { font-size: 10px; color: var(--sn-muted); margin-top: -2px; }
+.topnav-breadcrumb {
+  flex: 1; padding: 0 24px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--sn-muted);
+}
+.breadcrumb-sep { color: var(--sn-subtle); }
+.breadcrumb-current { color: var(--sn-text); font-weight: 500; }
+.topnav-actions {
+  padding: 0 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.nav-icon-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--sn-border);
+  background: var(--sn-mid);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  transition: border-color 0.2s;
+}
+.nav-icon-btn:hover { border-color: var(--sn-green); }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sn-blue), var(--sn-purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.badge {
+  background: var(--sn-red);
+  color: #fff; font-size: 9px; font-weight: 700;
+  border-radius: 10px; padding: 1px 5px;
+  position: absolute; top: -4px; right: -4px;
+}
+.rel { position: relative; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  position: fixed; top: var(--header-h); left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--sn-dark);
+  border-right: 1px solid var(--sn-border);
+  padding: 16px 0;
+  z-index: 90;
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--sn-border); border-radius: 4px; }
+
+.sidebar-section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+  color: var(--sn-subtle); text-transform: uppercase;
+  padding: 12px 20px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px; cursor: pointer;
+  font-size: 13px; color: var(--sn-muted);
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--sn-text); background: var(--sn-mid); }
+.nav-item.active {
+  color: var(--sn-green); background: var(--sn-green-dim);
+  border-left-color: var(--sn-green);
+}
+.nav-icon { font-size: 15px; width: 18px; text-align: center; }
+.nav-badge {
+  margin-left: auto; background: var(--sn-red);
+  color: #fff; font-size: 10px; font-weight: 700;
+  border-radius: 10px; padding: 1px 6px;
+}
+.nav-badge-green {
+  margin-left: auto; background: var(--sn-green-dim);
+  color: var(--sn-green); font-size: 10px; font-weight: 600;
+  border-radius: 10px; padding: 1px 6px;
+}
+
+/* ─── MAIN AREA ─── */
+.main {
+  margin-left: var(--sidebar-w);
+  margin-top: var(--header-h);
+  min-height: calc(100vh - var(--header-h));
+}
+
+/* ─── SCREEN NAVIGATION ─── */
+.screen-tabs {
+  display: flex; gap: 0;
+  background: var(--sn-dark);
+  border-bottom: 1px solid var(--sn-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.screen-tabs::-webkit-scrollbar { display: none; }
+.screen-tab {
+  padding: 10px 18px; cursor: pointer;
+  font-size: 12px; font-weight: 500; white-space: nowrap;
+  color: var(--sn-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.screen-tab:hover { color: var(--sn-text); }
+.screen-tab.active { color: var(--sn-green); border-bottom-color: var(--sn-green); }
+
+/* ─── SCREENS ─── */
+.screen { display: none; padding: 24px; }
+.screen.active { display: block; }
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--sn-card);
+  border: 1px solid var(--sn-border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.card-sm { padding: 16px; }
+.card-title {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+  color: var(--sn-muted); text-transform: uppercase; margin-bottom: 12px;
+}
+
+/* ─── KPI CARDS ─── */
+.kpi-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 14px; margin-bottom: 20px; }
+.kpi-card {
+  background: var(--sn-card);
+  border: 1px solid var(--sn-border);
+  border-radius: 12px; padding: 16px;
+  border-left: 3px solid var(--sn-border);
+  transition: transform 0.2s;
+}
+.kpi-card:hover { transform: translateY(-2px); }
+.kpi-card.green { border-left-color: var(--sn-green); }
+.kpi-card.blue { border-left-color: var(--sn-blue); }
+.kpi-card.amber { border-left-color: var(--sn-amber); }
+.kpi-card.red { border-left-color: var(--sn-red); }
+.kpi-card.purple { border-left-color: var(--sn-purple); }
+.kpi-label { font-size: 10px; color: var(--sn-muted); font-weight: 500; letter-spacing: 0.5px; margin-bottom: 6px; }
+.kpi-value { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.kpi-value.green { color: var(--sn-green); }
+.kpi-value.blue { color: var(--sn-blue); }
+.kpi-value.amber { color: var(--sn-amber); }
+.kpi-value.red { color: var(--sn-red); }
+.kpi-value.white { color: var(--sn-text); }
+.kpi-trend { font-size: 11px; color: var(--sn-muted); display: flex; align-items: center; gap: 4px; }
+.trend-up { color: var(--sn-red); }
+.trend-down { color: var(--sn-green); }
+.trend-good { color: var(--sn-green); }
+
+/* ─── CHARTS ─── */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-grid-3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-area {
+  background: var(--sn-card); border: 1px solid var(--sn-border); border-radius: 12px; padding: 18px;
+}
+.chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.chart-title { font-size: 13px; font-weight: 600; color: var(--sn-text); }
+.chart-sub { font-size: 11px; color: var(--sn-muted); margin-top: 2px; }
+.chart-actions { display: flex; gap: 6px; }
+.chip {
+  font-size: 11px; padding: 3px 10px; border-radius: 20px;
+  border: 1px solid var(--sn-border); color: var(--sn-muted); cursor: pointer;
+}
+.chip.active { background: var(--sn-green-dim); border-color: var(--sn-green); color: var(--sn-green); }
+
+/* ─── BAR CHART ─── */
+.bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+.bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
+.bars { display: flex; gap: 3px; align-items: flex-end; flex: 1; width: 100%; }
+.bar {
+  flex: 1; border-radius: 4px 4px 0 0;
+  transition: opacity 0.2s; cursor: pointer; min-width: 8px;
+}
+.bar:hover { opacity: 0.8; }
+.bar-label { font-size: 10px; color: var(--sn-muted); margin-top: 6px; text-align: center; }
+
+/* ─── DONUT ─── */
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut-svg { flex-shrink: 0; }
+.donut-legend { flex: 1; }
+.legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--sn-muted); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-val { margin-left: auto; font-weight: 600; color: var(--sn-text); font-family: 'DM Mono', monospace; font-size: 11px; }
+
+/* ─── SPARKLINE ─── */
+.sparkline { height: 40px; }
+
+/* ─── TABLE ─── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  color: var(--sn-subtle); text-transform: uppercase;
+  border-bottom: 1px solid var(--sn-border);
+}
+.data-table td {
+  padding: 11px 14px; font-size: 13px; color: var(--sn-muted);
+  border-bottom: 1px solid rgba(36,58,106,0.5);
+}
+.data-table tr:hover td { background: var(--sn-mid); color: var(--sn-text); }
+.data-table tr:last-child td { border-bottom: none; }
+.name-cell { color: var(--sn-text) !important; font-weight: 500; }
+
+/* ─── STATUS BADGES ─── */
+.status {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.status::before { content: '●'; font-size: 8px; }
+.status-green { background: var(--sn-green-dim); color: var(--sn-green); }
+.status-amber { background: var(--sn-amber-dim); color: var(--sn-amber); }
+.status-red { background: var(--sn-red-dim); color: var(--sn-red); }
+.status-blue { background: var(--sn-blue-dim); color: var(--sn-blue); }
+
+/* ─── DPD BADGE ─── */
+.dpd-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+}
+.dpd-30 { background: rgba(255,183,77,0.15); color: var(--sn-amber); }
+.dpd-60 { background: rgba(255,120,50,0.15); color: #ff7832; }
+.dpd-90 { background: var(--sn-red-dim); color: var(--sn-red); }
+.dpd-120 { background: rgba(200,40,40,0.2); color: #dc2626; }
+
+/* ─── AGENT WORKSPACE (Screen 2) ─── */
+.workspace-layout { display: grid; grid-template-columns: 280px 1fr 300px; gap: 0; height: calc(100vh - 52px - 41px); }
+.workspace-panel { border-right: 1px solid var(--sn-border); overflow-y: auto; }
+.workspace-panel:last-child { border-right: none; border-left: 1px solid var(--sn-border); }
+.panel-header {
+  padding: 14px 16px; border-bottom: 1px solid var(--sn-border);
+  font-size: 12px; font-weight: 600; color: var(--sn-text);
+  display: flex; align-items: center; gap: 8px; position: sticky; top: 0;
+  background: var(--sn-dark); z-index: 5;
+}
+.queue-item {
+  padding: 12px 16px; border-bottom: 1px solid var(--sn-border);
+  cursor: pointer; transition: background 0.15s;
+}
+.queue-item:hover, .queue-item.active { background: var(--sn-mid); }
+.queue-name { font-size: 13px; font-weight: 500; color: var(--sn-text); margin-bottom: 3px; }
+.queue-meta { font-size: 11px; color: var(--sn-muted); display: flex; gap: 8px; }
+.queue-amount { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--sn-amber); }
+.case-center { padding: 20px; overflow-y: auto; }
+.case-header-band {
+  background: linear-gradient(135deg, var(--sn-mid), var(--sn-card));
+  border: 1px solid var(--sn-border); border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.case-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.case-meta-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+.case-meta-item { font-size: 12px; color: var(--sn-muted); display: flex; align-items: center; gap: 5px; }
+.case-meta-val { color: var(--sn-text); font-weight: 500; }
+
+/* Timeline */
+.timeline { padding: 0; }
+.timeline-item { display: flex; gap: 12px; margin-bottom: 16px; }
+.timeline-dot { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.timeline-dot.green { background: var(--sn-green-dim); border: 1.5px solid var(--sn-green); color: var(--sn-green); }
+.timeline-dot.blue { background: var(--sn-blue-dim); border: 1.5px solid var(--sn-blue); color: var(--sn-blue); }
+.timeline-dot.amber { background: var(--sn-amber-dim); border: 1.5px solid var(--sn-amber); color: var(--sn-amber); }
+.timeline-dot.red { background: var(--sn-red-dim); border: 1.5px solid var(--sn-red); color: var(--sn-red); }
+.timeline-content { flex: 1; }
+.timeline-action { font-size: 13px; font-weight: 500; color: var(--sn-text); }
+.timeline-detail { font-size: 12px; color: var(--sn-muted); margin-top: 2px; }
+.timeline-time { font-size: 11px; color: var(--sn-subtle); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+/* AI Panel */
+.ai-panel { padding: 16px; }
+.ai-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(124,77,255,0.15), rgba(79,195,247,0.1));
+  border: 1px solid rgba(124,77,255,0.3);
+  margin-bottom: 14px;
+}
+.ai-avatar { font-size: 18px; }
+.ai-name { font-size: 13px; font-weight: 600; color: var(--sn-text); }
+.ai-sub { font-size: 11px; color: var(--sn-muted); }
+.ai-summary {
+  background: var(--sn-mid); border-radius: 8px; padding: 12px;
+  font-size: 12px; color: var(--sn-muted); line-height: 1.6; margin-bottom: 12px;
+  border-left: 2px solid var(--sn-purple);
+}
+.ai-nba-title { font-size: 11px; font-weight: 600; color: var(--sn-muted); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 8px; }
+.nba-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 8px;
+  background: var(--sn-mid); border: 1px solid var(--sn-border);
+  margin-bottom: 6px; cursor: pointer; transition: border-color 0.15s;
+}
+.nba-item:hover { border-color: var(--sn-green); }
+.nba-icon { font-size: 14px; }
+.nba-text { font-size: 12px; color: var(--sn-text); flex: 1; }
+.nba-action { font-size: 10px; color: var(--sn-green); font-weight: 600; }
+
+/* Outreach buttons */
+.outreach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.outreach-btn {
+  padding: 8px 10px; border-radius: 8px; border: 1px solid var(--sn-border);
+  background: var(--sn-mid); cursor: pointer; text-align: center;
+  font-size: 12px; color: var(--sn-text); font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.15s;
+}
+.outreach-btn:hover { border-color: var(--sn-green); background: var(--sn-green-dim); color: var(--sn-green); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  padding: 8px 16px; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; border: none;
+  display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s;
+}
+.btn-primary { background: var(--sn-green); color: var(--sn-navy); }
+.btn-primary:hover { background: #00e8b8; }
+.btn-outline { background: transparent; border: 1px solid var(--sn-border); color: var(--sn-muted); }
+.btn-outline:hover { border-color: var(--sn-green); color: var(--sn-green); }
+.btn-danger { background: var(--sn-red-dim); border: 1px solid var(--sn-red); color: var(--sn-red); }
+
+/* ─── FORM ELEMENTS ─── */
+.form-section { margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 11px; font-weight: 600; color: var(--sn-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; padding: 9px 12px;
+  background: var(--sn-mid); border: 1px solid var(--sn-border);
+  border-radius: 8px; color: var(--sn-text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+}
+.form-input:focus { outline: none; border-color: var(--sn-green); }
+.form-select {
+  width: 100%; padding: 9px 12px;
+  background: var(--sn-mid); border: 1px solid var(--sn-border);
+  border-radius: 8px; color: var(--sn-text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+  appearance: none;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* ─── TABS ─── */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--sn-border); margin-bottom: 16px; }
+.tab { padding: 8px 16px; font-size: 13px; color: var(--sn-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+.tab:hover { color: var(--sn-text); }
+.tab.active { color: var(--sn-green); border-bottom-color: var(--sn-green); }
+
+/* ─── PROGRESS ─── */
+.progress-bar { height: 6px; background: var(--sn-mid); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+/* ─── PTP CARD ─── */
+.ptp-card {
+  border: 1px solid var(--sn-green); border-radius: 10px; padding: 14px;
+  background: var(--sn-green-dim); margin-bottom: 12px;
+}
+.ptp-title { font-size: 11px; color: var(--sn-green); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.ptp-amount { font-family: 'Fraunces', serif; font-size: 24px; color: var(--sn-green); margin-bottom: 4px; }
+.ptp-detail { font-size: 12px; color: var(--sn-muted); }
+
+/* ─── COMPLIANCE INDICATOR ─── */
+.compliance-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: 8px;
+  background: var(--sn-mid); margin-bottom: 6px; font-size: 12px;
+}
+.compliance-ok { color: var(--sn-green); }
+.compliance-warn { color: var(--sn-amber); }
+.compliance-fail { color: var(--sn-red); }
+
+/* ─── SCREEN PAGE HEADER ─── */
+.page-header { margin-bottom: 20px; display: flex; align-items: flex-start; justify-content: space-between; }
+.page-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--sn-text); }
+.page-sub { font-size: 13px; color: var(--sn-muted); margin-top: 3px; }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-pill {
+  padding: 5px 12px; border-radius: 20px; font-size: 12px;
+  background: var(--sn-mid); border: 1px solid var(--sn-border);
+  color: var(--sn-muted); cursor: pointer;
+}
+.filter-pill.active { background: var(--sn-green-dim); border-color: var(--sn-green); color: var(--sn-green); }
+
+/* ─── WORKFLOW PLAYBOOK (Screen 6) ─── */
+.playbook-step {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px;
+  border-radius: 10px; border: 1px solid var(--sn-border);
+  background: var(--sn-card); margin-bottom: 10px; cursor: pointer;
+  transition: all 0.15s;
+}
+.playbook-step.completed { border-color: var(--sn-green); background: var(--sn-green-dim); }
+.playbook-step.active-step { border-color: var(--sn-blue); background: var(--sn-blue-dim); }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  background: var(--sn-mid); border: 1.5px solid var(--sn-border); color: var(--sn-muted);
+}
+.playbook-step.completed .step-num { background: var(--sn-green-dim); border-color: var(--sn-green); color: var(--sn-green); }
+.playbook-step.active-step .step-num { background: var(--sn-blue-dim); border-color: var(--sn-blue); color: var(--sn-blue); }
+.step-body { flex: 1; }
+.step-title { font-size: 13px; font-weight: 600; color: var(--sn-text); margin-bottom: 3px; }
+.step-desc { font-size: 12px; color: var(--sn-muted); }
+
+/* ─── APPROVAL FLOW ─── */
+.approval-flow { display: flex; align-items: center; gap: 0; margin: 16px 0; }
+.approval-node {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1;
+}
+.approval-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  border: 2px solid var(--sn-border); background: var(--sn-mid);
+}
+.approval-circle.done { background: var(--sn-green-dim); border-color: var(--sn-green); }
+.approval-circle.current { background: var(--sn-amber-dim); border-color: var(--sn-amber); }
+.approval-circle.pending { background: var(--sn-mid); border-color: var(--sn-border); }
+.approval-label { font-size: 11px; color: var(--sn-muted); text-align: center; }
+.approval-line { height: 2px; flex: 1; background: var(--sn-border); margin-bottom: 22px; }
+.approval-line.done { background: var(--sn-green); }
+
+/* ─── CHANNEL SELECTOR ─── */
+.channel-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin: 12px 0; }
+.channel-btn {
+  padding: 10px 6px; border-radius: 10px; border: 1px solid var(--sn-border);
+  background: var(--sn-mid); text-align: center; cursor: pointer; transition: all 0.15s;
+}
+.channel-btn:hover, .channel-btn.active { border-color: var(--sn-green); background: var(--sn-green-dim); }
+.channel-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.channel-label { font-size: 10px; color: var(--sn-muted); }
+.channel-btn.active .channel-label { color: var(--sn-green); }
+
+/* ─── LEGAL CHECKLIST ─── */
+.checklist-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sn-border);
+  background: var(--sn-card); margin-bottom: 6px;
+}
+.checklist-item.done { border-color: rgba(0,212,170,0.3); background: var(--sn-green-dim); }
+.checklist-item.pending { border-color: var(--sn-amber-dim); background: var(--sn-amber-dim); }
+.check-icon { font-size: 16px; }
+.check-text { font-size: 13px; flex: 1; }
+.checklist-item.done .check-text { color: var(--sn-text); }
+.check-owner { font-size: 11px; color: var(--sn-muted); }
+
+/* ─── SCROLL WRAPPERS ─── */
+.scroll-x { overflow-x: auto; }
+
+/* ─── ROLL RATE HEATMAP ─── */
+.heatmap { border-collapse: collapse; width: 100%; }
+.heatmap th, .heatmap td { padding: 8px 10px; text-align: center; font-size: 12px; }
+.heatmap th { color: var(--sn-muted); font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+.hm-cell {
+  border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+.animate-in { animation: fadeInUp 0.35s ease forwards; }
+
+/* Staggered */
+.stagger-1 { animation-delay: 0.05s; opacity: 0; }
+.stagger-2 { animation-delay: 0.1s; opacity: 0; }
+.stagger-3 { animation-delay: 0.15s; opacity: 0; }
+
+/* ─── RESPONSIVE HELPERS ─── */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.text-right { text-align: right; }
+.font-mono { font-family: 'DM Mono', monospace; }
+.text-green { color: var(--sn-green); }
+.text-amber { color: var(--sn-amber); }
+.text-red { color: var(--sn-red); }
+.text-blue { color: var(--sn-blue); }
+.text-muted { color: var(--sn-muted); }
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 11px; }
+.bold { font-weight: 600; }
+.divider { height: 1px; background: var(--sn-border); margin: 16px 0; }
+
+/* ─── SCREEN 1: Compact inner scroll ─── */
+#screen-1 { padding: 20px; overflow-y: auto; max-height: calc(100vh - 52px - 41px); }
+#screen-3, #screen-4, #screen-5, #screen-6, #screen-7, #screen-8, #screen-9, #screen-10 {
+  overflow-y: auto; max-height: calc(100vh - 52px - 41px);
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-logo">
+    <div class="logo-mark">SN</div>
+    <div>
+      <div class="logo-text">ServiceNow</div>
+      <div class="logo-sub">Collections Suite · APAC</div>
+    </div>
+  </div>
+  <div class="topnav-breadcrumb">
+    <span>Collections</span>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current" id="breadcrumb-text">Command Centre</span>
+  </div>
+  <div class="topnav-actions">
+    <div class="rel">
+      <div class="nav-icon-btn">🔔</div>
+      <span class="badge">4</span>
+    </div>
+    <div class="nav-icon-btn">❓</div>
+    <div class="nav-icon-btn">⚙️</div>
+    <div class="avatar">CK</div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section-label">Overview</div>
+  <a class="nav-item active" onclick="showScreen(1,'Command Centre')" href="#">
+    <span class="nav-icon">📊</span> Command Centre
+  </a>
+  <a class="nav-item" onclick="showScreen(2,'Agent Workspace')" href="#">
+    <span class="nav-icon">🖥️</span> Agent Workspace
+    <span class="nav-badge">12</span>
+  </a>
+
+  <div class="sidebar-section-label">Cases</div>
+  <a class="nav-item" onclick="showScreen(3,'Case Record')" href="#">
+    <span class="nav-icon">📋</span> Case Record
+  </a>
+  <a class="nav-item" onclick="showScreen(4,'Customer 360')" href="#">
+    <span class="nav-icon">👤</span> Customer 360
+  </a>
+
+  <div class="sidebar-section-label">Actions</div>
+  <a class="nav-item" onclick="showScreen(5,'Outreach Composer')" href="#">
+    <span class="nav-icon">💬</span> Outreach Composer
+  </a>
+  <a class="nav-item" onclick="showScreen(6,'PTP & Settlement')" href="#">
+    <span class="nav-icon">🤝</span> PTP & Settlement
+  </a>
+  <a class="nav-item" onclick="showScreen(7,'Dispute & Complaint')" href="#">
+    <span class="nav-icon">⚠️</span> Dispute / Complaint
+    <span class="nav-badge">3</span>
+  </a>
+
+  <div class="sidebar-section-label">Escalation</div>
+  <a class="nav-item" onclick="showScreen(8,'Field Visit')" href="#">
+    <span class="nav-icon">🚗</span> Field Visit
+  </a>
+  <a class="nav-item" onclick="showScreen(9,'Legal Escalation')" href="#">
+    <span class="nav-icon">⚖️</span> Legal Escalation
+    <span class="nav-badge">2</span>
+  </a>
+
+  <div class="sidebar-section-label">Governance</div>
+  <a class="nav-item" onclick="showScreen(10,'Audit & Compliance')" href="#">
+    <span class="nav-icon">🛡️</span> Audit & Compliance
+    <span class="nav-badge-green">OK</span>
+  </a>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- SCREEN TABS -->
+<div class="screen-tabs">
+  <div class="screen-tab active" onclick="showScreen(1,'Command Centre')">📊 Command Centre</div>
+  <div class="screen-tab" onclick="showScreen(2,'Agent Workspace')">🖥️ Agent Workspace</div>
+  <div class="screen-tab" onclick="showScreen(3,'Case Record')">📋 Case Record</div>
+  <div class="screen-tab" onclick="showScreen(4,'Customer 360')">👤 Customer 360</div>
+  <div class="screen-tab" onclick="showScreen(5,'Outreach Composer')">💬 Outreach</div>
+  <div class="screen-tab" onclick="showScreen(6,'PTP & Settlement')">🤝 PTP / Settlement</div>
+  <div class="screen-tab" onclick="showScreen(7,'Dispute')">⚠️ Dispute</div>
+  <div class="screen-tab" onclick="showScreen(8,'Field Visit')">🚗 Field Visit</div>
+  <div class="screen-tab" onclick="showScreen(9,'Legal')">⚖️ Legal</div>
+  <div class="screen-tab" onclick="showScreen(10,'Audit')">🛡️ Audit</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 1: COMMAND CENTRE DASHBOARD                 -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen active" id="screen-1">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Collections Command Centre</div>
+      <div class="page-sub">Real-time portfolio intelligence · Asia Pacific · Q1 2025</div>
+    </div>
+    <div class="flex gap-8 items-center">
+      <div class="filter-row">
+        <span class="filter-pill active">All Regions</span>
+        <span class="filter-pill">SG</span>
+        <span class="filter-pill">MY</span>
+        <span class="filter-pill">ID</span>
+        <span class="filter-pill">PH</span>
+        <span class="filter-pill">TH</span>
+      </div>
+      <button class="btn btn-primary">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- KPI ROW -->
+  <div class="kpi-grid animate-in">
+    <div class="kpi-card amber">
+      <div class="kpi-label">Total Delinquent Accts</div>
+      <div class="kpi-value amber">14,832</div>
+      <div class="kpi-trend"><span class="trend-up">↑ 3.2%</span> vs last month</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Portfolio at Risk (S$)</div>
+      <div class="kpi-value red">$284M</div>
+      <div class="kpi-trend"><span class="trend-up">↑ 1.8%</span> vs last month</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Cure Rate (MTD)</div>
+      <div class="kpi-value green">38.4%</div>
+      <div class="kpi-trend"><span class="trend-good">↑ 2.1%</span> vs last month</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">PTP Kept Rate</div>
+      <div class="kpi-value blue">71.2%</div>
+      <div class="kpi-trend"><span class="trend-good">↑ 1.4%</span> vs last month</div>
+    </div>
+    <div class="kpi-card white">
+      <div class="kpi-label">Contact Rate (RPC)</div>
+      <div class="kpi-value white">24.6%</div>
+      <div class="kpi-trend"><span class="trend-good">↑ 0.8%</span> vs last month</div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">Digital Self-Cure</div>
+      <div class="kpi-value" style="color:var(--sn-purple)">31.7%</div>
+      <div class="kpi-trend"><span class="trend-good">↑ 5.2%</span> vs last month</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="chart-grid stagger-1 animate-in">
+    <!-- DPD Bucket Chart -->
+    <div class="chart-area">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Portfolio by DPD Bucket</div>
+          <div class="chart-sub">Account count + outstanding balance</div>
+        </div>
+        <div class="chart-actions">
+          <span class="chip active">Count</span>
+          <span class="chip">Value</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:flex-end; height:120px; padding: 0 8px;">
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+            <div class="bar" style="height:85%; background:#22c55e; width:100%;"></div>
+          </div>
+          <div class="bar-label">1-30</div>
+          <div style="font-size:10px;color:var(--sn-muted)">5,821</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+            <div class="bar" style="height:60%; background:#f97316; width:100%;"></div>
+          </div>
+          <div class="bar-label">31-60</div>
+          <div style="font-size:10px;color:var(--sn-muted)">3,940</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+            <div class="bar" style="height:40%; background:#ef5350; width:100%;"></div>
+          </div>
+          <div class="bar-label">61-90</div>
+          <div style="font-size:10px;color:var(--sn-muted)">2,608</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+            <div class="bar" style="height:25%; background:#dc2626; width:100%;"></div>
+          </div>
+          <div class="bar-label">90+</div>
+          <div style="font-size:10px;color:var(--sn-muted)">1,622</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+            <div class="bar" style="height:12%; background:#6b7280; width:100%;"></div>
+          </div>
+          <div class="bar-label">CO</div>
+          <div style="font-size:10px;color:var(--sn-muted)">841</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roll Rate Heatmap -->
+    <div class="chart-area">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Roll Rate Matrix</div>
+          <div class="chart-sub">Month-on-month bucket migration</div>
+        </div>
+      </div>
+      <div class="scroll-x">
+        <table class="heatmap">
+          <tr>
+            <th style="text-align:left">From ↓ To →</th>
+            <th>Current</th><th>1-30</th><th>31-60</th><th>61-90</th><th>90+</th>
+          </tr>
+          <tr>
+            <td style="color:var(--sn-muted);font-size:11px;">Current</td>
+            <td><div class="hm-cell" style="background:rgba(34,197,94,0.3);color:#22c55e;padding:4px 8px;border-radius:4px;">72.4%</div></td>
+            <td><div class="hm-cell" style="background:rgba(255,183,77,0.25);color:#ffb74d;padding:4px 8px;border-radius:4px;">18.2%</div></td>
+            <td><div class="hm-cell" style="background:rgba(255,120,50,0.15);color:#f97316;padding:4px 8px;border-radius:4px;">6.8%</div></td>
+            <td><div class="hm-cell" style="padding:4px 8px;color:var(--sn-subtle);">2.1%</div></td>
+            <td><div class="hm-cell" style="padding:4px 8px;color:var(--sn-subtle);">0.5%</div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--sn-muted);font-size:11px;">1-30</td>
+            <td><div class="hm-cell" style="background:rgba(34,197,94,0.2);color:#22c55e;padding:4px 8px;border-radius:4px;">48.3%</div></td>
+            <td><div class="hm-cell" style="background:rgba(255,183,77,0.3);color:#ffb74d;padding:4px 8px;border-radius:4px;">24.1%</div></td>
+            <td><div class="hm-cell" style="background:rgba(255,120,50,0.25);color:#f97316;padding:4px 8px;border-radius:4px;">19.4%</div></td>
+            <td><div class="hm-cell" style="background:rgba(239,83,80,0.15);color:#ef5350;padding:4px 8px;border-radius:4px;">6.2%</div></td>
+            <td><div class="hm-cell" style="padding:4px 8px;color:var(--sn-subtle);">2.0%</div></td>
+          </tr>
+          <tr>
+            <td style="color:var(--sn-muted);font-size:11px;">31-60</td>
+            <td><div class="hm-cell" style="background:rgba(34,197,94,0.15);color:#22c55e;padding:4px 8px;border-radius:4px;">31.2%</div></td>
+            <td><div class="hm-cell" style="padding:4px 8px;color:var(--sn-subtle);">12.4%</div></td>
+            <td><div class="hm-cell" style="background:rgba(255,120,50,0.3);color:#f97316;padding:4px 8px;border-radius:4px;">28.7%</div></td>
+            <td><div class="hm-cell" style="background:rgba(239,83,80,0.25);color:#ef5350;padding:4px 8px;border-radius:4px;">21.8%</div></td>
+            <td><div class="hm-cell" style="background:rgba(220,38,38,0.2);color:#dc2626;padding:4px 8px;border-radius:4px;">5.9%</div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="chart-grid-3 stagger-2 animate-in">
+    <!-- Strategy Donut -->
+    <div class="chart-area">
+      <div class="chart-header">
+        <div class="chart-title">Collection Strategy Mix</div>
+      </div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sn-mid)" stroke-width="18"/>
+          <!-- Digital-first: 42% -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sn-green)" stroke-width="18"
+            stroke-dasharray="100.53 238.76" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <!-- Call-first: 31% -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sn-blue)" stroke-width="18"
+            stroke-dasharray="74.24 265.05" stroke-dashoffset="-100.53" transform="rotate(-90 50 50)"/>
+          <!-- Field: 16% -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sn-amber)" stroke-width="18"
+            stroke-dasharray="38.32 300.97" stroke-dashoffset="-174.77" transform="rotate(-90 50 50)"/>
+          <!-- Legal: 11% -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--sn-red)" stroke-width="18"
+            stroke-dasharray="26.39 312.90" stroke-dashoffset="-213.09" transform="rotate(-90 50 50)"/>
+          <text x="50" y="46" text-anchor="middle" fill="var(--sn-text)" font-size="11" font-weight="600" font-family="DM Sans">14,832</text>
+          <text x="50" y="58" text-anchor="middle" fill="var(--sn-muted)" font-size="8">accounts</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sn-green)"></div>Digital-first<span class="legend-val">42% · 6,229</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sn-blue)"></div>Call-first<span class="legend-val">31% · 4,598</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sn-amber)"></div>Field visit<span class="legend-val">16% · 2,373</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--sn-red)"></div>Legal<span class="legend-val">11% · 1,632</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PTP Status -->
+    <div class="chart-area">
+      <div class="chart-header">
+        <div class="chart-title">PTP Status</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="text-xs text-muted">Kept</span>
+            <span class="text-xs text-green font-mono">71.2%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:71.2%;background:var(--sn-green);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="text-xs text-muted">Broken</span>
+            <span class="text-xs text-red font-mono">18.6%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:18.6%;background:var(--sn-red);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span class="text-xs text-muted">Pending</span>
+            <span class="text-xs text-amber font-mono">10.2%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:10.2%;background:var(--sn-amber);"></div></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="text-xs text-muted">PTPs due today: <span class="text-amber font-mono bold">847</span></div>
+      <div class="text-xs text-muted mt-8">Payments received: <span class="text-green font-mono bold">S$4.2M</span></div>
+    </div>
+
+    <!-- Compliance -->
+    <div class="chart-area">
+      <div class="chart-header">
+        <div class="chart-title">Compliance Status</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="compliance-row"><span>Contact hours</span><span class="compliance-ok">✓ 100%</span></div>
+        <div class="compliance-row"><span>Freq. limits</span><span class="compliance-ok">✓ Compliant</span></div>
+        <div class="compliance-row"><span>Vulnerable queue</span><span class="compliance-warn">⚠ 12 cases</span></div>
+        <div class="compliance-row"><span>Open disputes</span><span class="compliance-warn">⚠ 38 open</span></div>
+        <div class="compliance-row"><span>SLA at risk</span><span class="compliance-fail">✗ 7 breach</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNTS TABLE -->
+  <div class="chart-area stagger-3 animate-in">
+    <div class="chart-header">
+      <div class="chart-title">High Priority Accounts</div>
+      <button class="btn btn-outline" onclick="showScreen(2,'Agent Workspace')">Open in Workspace →</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Customer</th><th>Product</th><th>DPD</th><th>Outstanding</th>
+          <th>Risk</th><th>Strategy</th><th>Channel</th><th>Last Contact</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="showScreen(2,'Agent Workspace – Aisha Rahman')" style="cursor:pointer">
+          <td class="name-cell">Aisha Rahman</td>
+          <td>Personal Finance</td>
+          <td><span class="dpd-badge dpd-60">52 DPD</span></td>
+          <td class="font-mono">S$42,800</td>
+          <td><span class="status status-amber">Medium</span></td>
+          <td>Call-first</td>
+          <td>📞 Call</td>
+          <td class="text-xs text-muted font-mono">2h ago</td>
+          <td><span class="status status-amber">PTP Offered</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Daniel Tan</td>
+          <td>Credit Card</td>
+          <td><span class="dpd-badge dpd-30">18 DPD</span></td>
+          <td class="font-mono">S$8,420</td>
+          <td><span class="status status-green">Low</span></td>
+          <td>Digital-first</td>
+          <td>✉️ Email</td>
+          <td class="text-xs text-muted font-mono">1d ago</td>
+          <td><span class="status status-green">PTP Kept</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Ravi Kumar</td>
+          <td>Credit Card</td>
+          <td><span class="dpd-badge dpd-60">45 DPD</span></td>
+          <td class="font-mono">S$15,200</td>
+          <td><span class="status status-amber">Medium</span></td>
+          <td>Dispute hold</td>
+          <td>📧 Email</td>
+          <td class="text-xs text-muted font-mono">3h ago</td>
+          <td><span class="status status-blue">Dispute Open</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Mei Ling</td>
+          <td>Mortgage</td>
+          <td><span class="dpd-badge dpd-60">35 DPD</span></td>
+          <td class="font-mono">S$124,500</td>
+          <td><span class="status status-red">Vulnerable</span></td>
+          <td>Special Care</td>
+          <td>📞 Supervised</td>
+          <td class="text-xs text-muted font-mono">5h ago</td>
+          <td><span class="status status-red">Escalated</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Nur Hadi</td>
+          <td>SME Finance</td>
+          <td><span class="dpd-badge dpd-90">75 DPD</span></td>
+          <td class="font-mono">S$218,000</td>
+          <td><span class="status status-red">High</span></td>
+          <td>Field Visit</td>
+          <td>🚗 Field</td>
+          <td class="text-xs text-muted font-mono">1d ago</td>
+          <td><span class="status status-amber">Visit Pending</span></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Suresh Iyer</td>
+          <td>Personal Finance</td>
+          <td><span class="dpd-badge dpd-120">120 DPD</span></td>
+          <td class="font-mono">S$67,300</td>
+          <td><span class="status status-red">High</span></td>
+          <td>Legal</td>
+          <td>⚖️ Legal</td>
+          <td class="text-xs text-muted font-mono">2d ago</td>
+          <td><span class="status status-red">Legal Notice</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 2: AGENT WORKSPACE                         -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-2" style="padding:0;">
+  <div class="workspace-layout">
+
+    <!-- LEFT: QUEUE -->
+    <div class="workspace-panel">
+      <div class="panel-header">
+        📋 My Queue
+        <span class="nav-badge" style="margin-left:auto">12</span>
+      </div>
+      <div style="padding:10px 12px; border-bottom:1px solid var(--sn-border);">
+        <input class="form-input" placeholder="🔍 Search cases..." style="padding:7px 10px; font-size:12px;">
+      </div>
+      <div style="display:flex; padding:8px 12px; gap:4px; border-bottom:1px solid var(--sn-border);">
+        <span class="chip active">My Cases</span>
+        <span class="chip">High Risk</span>
+        <span class="chip">Vulnerable</span>
+      </div>
+
+      <div class="queue-item active">
+        <div class="queue-name">Aisha Rahman</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-60">52 DPD</span>
+          <span class="queue-amount">S$42,800</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;">
+          <span class="status status-amber">PTP Offered</span>
+        </div>
+      </div>
+      <div class="queue-item">
+        <div class="queue-name">Daniel Tan</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-30">18 DPD</span>
+          <span class="queue-amount">S$8,420</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;"><span class="status status-green">PTP Kept</span></div>
+      </div>
+      <div class="queue-item">
+        <div class="queue-name">Ravi Kumar</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-60">45 DPD</span>
+          <span class="queue-amount">S$15,200</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;"><span class="status status-blue">Dispute Open</span></div>
+      </div>
+      <div class="queue-item">
+        <div class="queue-name">Mei Ling ⚠️</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-60">35 DPD</span>
+          <span class="queue-amount">S$124,500</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;"><span class="status status-red">Vulnerable</span></div>
+      </div>
+      <div class="queue-item">
+        <div class="queue-name">Nur Hadi</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-90">75 DPD</span>
+          <span class="queue-amount">S$218,000</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;"><span class="status status-amber">Field Assigned</span></div>
+      </div>
+      <div class="queue-item">
+        <div class="queue-name">Suresh Iyer</div>
+        <div class="queue-meta">
+          <span class="dpd-badge dpd-120">120 DPD</span>
+          <span class="queue-amount">S$67,300</span>
+        </div>
+        <div class="queue-meta" style="margin-top:4px;"><span class="status status-red">Legal Stage</span></div>
+      </div>
+    </div>
+
+    <!-- CENTER: CASE VIEW -->
+    <div class="workspace-panel" style="border-right:none; overflow-y:auto;">
+      <div style="padding:20px;">
+        <div class="case-header-band">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <div>
+              <div class="text-xs text-muted font-mono">COL-2025-008421</div>
+              <div class="case-name">Aisha Rahman</div>
+              <div class="text-sm text-muted">IC: S8412034A · Personal Finance · DBS Singapore</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Fraunces',serif;font-size:28px;color:var(--sn-amber);">S$42,800</div>
+              <div class="text-xs text-muted">Outstanding balance</div>
+              <div class="mt-8"><span class="status status-amber">PTP Offered</span></div>
+            </div>
+          </div>
+          <div class="case-meta-row">
+            <div class="case-meta-item">📅 DPD: <span class="case-meta-val dpd-badge dpd-60 ml-4">52</span></div>
+            <div class="case-meta-item">🎯 Risk: <span class="case-meta-val">Medium</span></div>
+            <div class="case-meta-item">🗺 Bucket: <span class="case-meta-val">31-60</span></div>
+            <div class="case-meta-item">📱 Pref Channel: <span class="case-meta-val">WhatsApp</span></div>
+            <div class="case-meta-item">⏰ Last Contact: <span class="case-meta-val">Today 09:42</span></div>
+            <div class="case-meta-item">🤖 Strategy: <span class="case-meta-val text-blue">Call-first</span></div>
+          </div>
+        </div>
+
+        <!-- PTP Card -->
+        <div class="ptp-card">
+          <div class="ptp-title">💚 Active Promise-to-Pay</div>
+          <div class="ptp-amount">S$42,800</div>
+          <div class="ptp-detail">Promised payment via PayNow · Due: <strong style="color:var(--sn-text)">28 Mar 2025</strong></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn btn-primary" style="font-size:11px;padding:6px 12px;">✓ Mark as Kept</button>
+            <button class="btn btn-outline" style="font-size:11px;padding:6px 12px;">↻ Reschedule</button>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">Interaction Timeline</div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot green">💬</div>
+              <div class="timeline-content">
+                <div class="timeline-action">WhatsApp sent · Template: "31-60 DPD Reminder (SG)"</div>
+                <div class="timeline-detail">Now Assist drafted · Disclosure included · Contact hour OK</div>
+                <div class="timeline-time">Today 09:42 · Agent: Charles Lim</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot blue">📞</div>
+              <div class="timeline-content">
+                <div class="timeline-action">Inbound call received · Customer initiated</div>
+                <div class="timeline-detail">PTP discussed · Amount S$42,800 · Date 28 Mar</div>
+                <div class="timeline-time">Today 08:15 · Duration: 8m 42s</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot amber">✉️</div>
+              <div class="timeline-content">
+                <div class="timeline-action">Email sent · "Payment Reminder – 45 DPD"</div>
+                <div class="timeline-detail">Opened: Yes · Clicked payment link: No</div>
+                <div class="timeline-time">Yesterday 14:30 · Auto-triggered</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot red">📋</div>
+              <div class="timeline-content">
+                <div class="timeline-action">Case created · Strategy assigned: Call-first</div>
+                <div class="timeline-detail">Decisioning engine · DPD 31 triggered bucket change</div>
+                <div class="timeline-time">21 Feb 2025 · System</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" onclick="showScreen(5,'Outreach Composer')">💬 Send Message</button>
+          <button class="btn btn-outline" onclick="showScreen(6,'PTP & Settlement')">🤝 Create PTP</button>
+          <button class="btn btn-outline" onclick="showScreen(3,'Case Record')">📋 View Full Case</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: NOW ASSIST -->
+    <div class="workspace-panel">
+      <div class="ai-panel">
+        <div class="ai-header">
+          <div class="ai-avatar">✨</div>
+          <div>
+            <div class="ai-name">Now Assist</div>
+            <div class="ai-sub">AI Collections Copilot</div>
+          </div>
+        </div>
+
+        <div class="card-title">AI Case Summary</div>
+        <div class="ai-summary">
+          Aisha Rahman holds a Personal Finance loan with S$42,800 outstanding at 52 DPD. She is a Medium risk customer with no previous delinquencies. She called today and verbally committed to full payment by 28 Mar via PayNow. Compliance: contact hour OK, frequency limit met. No dispute or vulnerability flags. Recommended: confirm PTP and send WhatsApp receipt with PayNow link.
+        </div>
+
+        <div class="ai-nba-title">Next Best Actions</div>
+        <div class="nba-item" onclick="showScreen(6,'PTP & Settlement')">
+          <span class="nba-icon">🤝</span>
+          <span class="nba-text">Confirm PTP and send PayNow link</span>
+          <span class="nba-action">HIGH →</span>
+        </div>
+        <div class="nba-item">
+          <span class="nba-icon">📅</span>
+          <span class="nba-text">Schedule payment reminder for 27 Mar</span>
+          <span class="nba-action">DO →</span>
+        </div>
+        <div class="nba-item">
+          <span class="nba-icon">💬</span>
+          <span class="nba-text">Consider 10% discount if PTP broken</span>
+          <span class="nba-action">PLAN →</span>
+        </div>
+
+        <div class="divider"></div>
+        <div class="card-title">Quick Outreach</div>
+        <div class="outreach-grid">
+          <div class="outreach-btn" onclick="showScreen(5,'Outreach – WhatsApp')">💬 WhatsApp</div>
+          <div class="outreach-btn">📧 Email</div>
+          <div class="outreach-btn">📱 SMS</div>
+          <div class="outreach-btn">📞 Call</div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="card-title">Compliance Check</div>
+        <div class="compliance-row"><span>Contact hours (SG: 7am-9pm)</span><span class="compliance-ok">✓ OK</span></div>
+        <div class="compliance-row"><span>Weekly contact limit</span><span class="compliance-ok">✓ 2/3 used</span></div>
+        <div class="compliance-row"><span>Disclosure required</span><span class="compliance-ok">✓ Sent</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 3: CASE RECORD (FORM)                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-3" style="padding:20px;">
+  <div class="page-header">
+    <div>
+      <div style="font-size:11px;color:var(--sn-muted);margin-bottom:4px;">COL-2025-008421 · Created 21 Feb 2025</div>
+      <div class="page-title">Collections Case: Aisha Rahman</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-outline">Save</button>
+      <button class="btn btn-primary">Update Case</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">Overview</div>
+    <div class="tab">Customer</div>
+    <div class="tab">Strategy</div>
+    <div class="tab">Interactions (8)</div>
+    <div class="tab">PTPs (2)</div>
+    <div class="tab">Approvals</div>
+    <div class="tab">Documents</div>
+  </div>
+
+  <div class="form-grid" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Case Information</div>
+      <div class="form-group">
+        <label class="form-label">Account ID</label>
+        <input class="form-input" value="ACC-SG-2021-04872" readonly>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Product Type</label>
+          <select class="form-select"><option>Personal Finance</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">DPD</label>
+          <input class="form-input" value="52" style="color:var(--sn-amber);">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">DPD Bucket</label>
+          <select class="form-select"><option>31-60</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Outstanding Amount</label>
+          <input class="form-input" value="S$ 42,800.00" style="color:var(--sn-amber);font-family:'DM Mono',monospace;">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Risk Tier</label>
+          <select class="form-select"><option>Medium</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PTP Status</label>
+          <select class="form-select"><option>Agreed</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Flags & Controls</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="compliance-row"><span>Vulnerable Flag</span><span style="color:var(--sn-muted)">☐ False</span></div>
+        <div class="compliance-row"><span>Hardship Indicator</span><span style="color:var(--sn-muted)">☐ False</span></div>
+        <div class="compliance-row"><span>Dispute Open</span><span style="color:var(--sn-muted)">☐ False</span></div>
+        <div class="compliance-row"><span>Contact Freq. Lock</span><span style="color:var(--sn-muted)">☐ False</span></div>
+        <div class="compliance-row"><span>Shariah Product</span><span style="color:var(--sn-muted)">☐ False</span></div>
+        <div class="compliance-row"><span>Collections Hold</span><span style="color:var(--sn-muted)">☐ False</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="card">
+      <div class="card-title">Strategy & Decisioning</div>
+      <div class="form-group">
+        <label class="form-label">Collection Strategy</label>
+        <select class="form-select"><option>Call-first</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred Channel</label>
+        <select class="form-select"><option>WhatsApp</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Next Best Action (AI)</label>
+        <input class="form-input" value="Confirm PTP · send PayNow link via WhatsApp" readonly style="color:var(--sn-green);">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Legal Stage</label>
+        <select class="form-select"><option>Not started</option></select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Assignment</div>
+      <div class="form-group">
+        <label class="form-label">Assignment Group</label>
+        <input class="form-input" value="Call Center Collections – SG">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assigned Agent</label>
+        <input class="form-input" value="Charles Lim">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supervisor</label>
+        <input class="form-input" value="Rina Patel">
+      </div>
+      <div class="form-group">
+        <label class="form-label">SLA: Initial Contact</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="progress-bar" style="flex:1;height:8px;"><div class="progress-fill" style="width:82%;background:var(--sn-green);"></div></div>
+          <span class="text-xs text-green font-mono">Met ✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 4: CUSTOMER 360                            -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-4" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Customer 360 – Aisha Rahman</div>
+    <span class="status status-amber">Medium Risk</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Personal Information</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="compliance-row"><span class="text-muted">Full Name</span><span class="bold">Aisha bte Rahman</span></div>
+        <div class="compliance-row"><span class="text-muted">NRIC</span><span class="font-mono">S8412034A</span></div>
+        <div class="compliance-row"><span class="text-muted">DOB</span><span>12 Apr 1984</span></div>
+        <div class="compliance-row"><span class="text-muted">Nationality</span><span>🇸🇬 Singaporean</span></div>
+        <div class="compliance-row"><span class="text-muted">Mobile</span><span class="font-mono">+65 9xxx xxxx</span></div>
+        <div class="compliance-row"><span class="text-muted">Email</span><span>aisha@email.com</span></div>
+        <div class="compliance-row"><span class="text-muted">Language</span><span>English / Malay</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Financial Profile</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="compliance-row"><span class="text-muted">Product</span><span>Personal Finance</span></div>
+        <div class="compliance-row"><span class="text-muted">Loan Amount</span><span class="font-mono text-amber">S$42,800</span></div>
+        <div class="compliance-row"><span class="text-muted">EMI / Month</span><span class="font-mono">S$1,240</span></div>
+        <div class="compliance-row"><span class="text-muted">Next Due</span><span class="font-mono text-red">28 Mar 2025</span></div>
+        <div class="compliance-row"><span class="text-muted">Credit Score</span><span class="text-amber font-mono">622</span></div>
+        <div class="compliance-row"><span class="text-muted">Income</span><span class="font-mono">S$4,200/mo</span></div>
+        <div class="compliance-row"><span class="text-muted">Employer</span><span>Retail sector</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Contact & Consent</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="compliance-row"><span class="text-muted">WhatsApp</span><span class="compliance-ok">✓ Consented</span></div>
+        <div class="compliance-row"><span class="text-muted">Email</span><span class="compliance-ok">✓ Consented</span></div>
+        <div class="compliance-row"><span class="text-muted">SMS</span><span class="compliance-ok">✓ Consented</span></div>
+        <div class="compliance-row"><span class="text-muted">Voice Call</span><span class="compliance-ok">✓ Consented</span></div>
+        <div class="compliance-row"><span class="text-muted">Marketing</span><span class="compliance-fail">✗ Opted out</span></div>
+        <div class="compliance-row"><span class="text-muted">PDPA Consent</span><span class="compliance-ok">✓ 12 Jan 2022</span></div>
+        <div class="compliance-row"><span class="text-muted">Best Time</span><span>10am – 6pm</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Payment History – Last 12 Months</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:80px;padding:0 4px;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Apr</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">May</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Jun</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Jul</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Aug</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:80%;background:var(--sn-amber);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Sep</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Oct</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Nov</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Dec</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:100%;background:var(--sn-green);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Jan</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:30%;background:var(--sn-red);width:100%;border-radius:3px 3px 0 0;"></div>
+        </div>
+        <div class="bar-label">Feb</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
+          <div class="bar" style="height:0;width:100%;"></div>
+        </div>
+        <div class="bar-label" style="color:var(--sn-red)">Mar</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:10px;">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sn-green)"></div><span class="text-xs">Full payment</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sn-amber)"></div><span class="text-xs">Partial payment</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sn-red)"></div><span class="text-xs">Missed</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 5: OUTREACH COMPOSER                        -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-5" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Outreach Composer</div>
+    <span class="text-muted text-sm">Case: COL-2025-008421 · Aisha Rahman</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:16px;">
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">Select Channel</div>
+        <div class="channel-grid">
+          <div class="channel-btn active">
+            <span class="channel-icon">💬</span>
+            <div class="channel-label">WhatsApp</div>
+          </div>
+          <div class="channel-btn">
+            <span class="channel-icon">📧</span>
+            <div class="channel-label">Email</div>
+          </div>
+          <div class="channel-btn">
+            <span class="channel-icon">📱</span>
+            <div class="channel-label">SMS</div>
+          </div>
+          <div class="channel-btn">
+            <span class="channel-icon">📞</span>
+            <div class="channel-label">Call</div>
+          </div>
+          <div class="channel-btn">
+            <span class="channel-icon">🔔</span>
+            <div class="channel-label">App Push</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-16">
+        <div class="card-title">Message Template</div>
+        <div class="form-group">
+          <label class="form-label">Template</label>
+          <select class="form-select">
+            <option>WA-COLL-SG-031: Payment Reminder with PTP Confirmation (EN)</option>
+            <option>WA-COLL-SG-032: Settlement Offer (EN)</option>
+            <option>WA-COLL-MY-011: Peringatan Bayaran (BM)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message Preview (AI-drafted)</label>
+          <textarea class="form-input" rows="6" style="resize:vertical;line-height:1.6;">Dear Ms. Aisha, this is a payment reminder from DBS Collections regarding your Personal Finance account. Your outstanding balance is S$42,800.00. As per your commitment on 25 Mar, payment is due on 28 Mar 2025. To pay now, tap: [PayNow Link]. DBS Collections · +65 6xxx xxxx · As required by the Credit Collection Association of Singapore.</textarea>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:var(--sn-green-dim);border:1px solid rgba(0,212,170,0.3);">
+          <span style="font-size:14px;">✅</span>
+          <span class="text-sm text-green">Auto-disclosure included · Contact hour: OK (10:32 SG time) · Frequency: 2 of 3 weekly contacts used</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary">Send via WhatsApp</button>
+        <button class="btn btn-outline">Preview</button>
+        <button class="btn btn-outline">Save Draft</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">PayNow Integration</div>
+        <div style="text-align:center;padding:16px;">
+          <div style="width:100px;height:100px;background:white;border-radius:8px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#333;font-weight:600;letter-spacing:0.5px;">QR CODE</div>
+          <div class="text-xs text-muted">Dynamic QR · S$42,800.00</div>
+          <div class="text-xs text-muted mt-8">Expires: 29 Mar 2025</div>
+          <div class="mt-12" style="padding:8px 12px;background:var(--sn-green-dim);border-radius:8px;border:1px solid rgba(0,212,170,0.3);">
+            <div class="text-xs text-green bold">PayNow · GrabPay · PayLah!</div>
+            <div class="text-xs text-muted mt-8">Real-time confirmation on payment</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Compliance Gate</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="compliance-row"><span class="text-xs">Contact hours</span><span class="compliance-ok text-xs">✓ 07:00–21:00</span></div>
+          <div class="compliance-row"><span class="text-xs">Weekly limit</span><span class="compliance-ok text-xs">✓ 2/3 used</span></div>
+          <div class="compliance-row"><span class="text-xs">Consent: WhatsApp</span><span class="compliance-ok text-xs">✓ Active</span></div>
+          <div class="compliance-row"><span class="text-xs">Disclosure text</span><span class="compliance-ok text-xs">✓ Included</span></div>
+          <div class="compliance-row"><span class="text-xs">Language match</span><span class="compliance-ok text-xs">✓ English</span></div>
+          <div class="compliance-row"><span class="text-xs">Threat / abuse scan</span><span class="compliance-ok text-xs">✓ Clean</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 6: PTP + SETTLEMENT APPROVAL               -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-6" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">PTP & Settlement</div>
+    <span class="text-muted text-sm">Case: COL-2025-008421 · Aisha Rahman</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <!-- PTP Wizard -->
+    <div class="card">
+      <div class="card-title">Promise-to-Pay Wizard</div>
+      <div class="form-group">
+        <label class="form-label">PTP Amount</label>
+        <input class="form-input" value="S$ 42,800.00" style="font-family:'DM Mono',monospace;color:var(--sn-green);font-size:18px;font-weight:600;">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Payment Date</label>
+          <input class="form-input" value="2025-03-28" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select">
+            <option>PayNow (Singapore)</option>
+            <option>Bank Transfer</option>
+            <option>GrabPay</option>
+            <option>GIRO Auto-debit</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Agent Notes</label>
+        <textarea class="form-input" rows="3">Customer called in, confirmed full payment by 28 Mar. Verbally committed. Sending PayNow link via WhatsApp.</textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn btn-primary">Confirm PTP ✓</button>
+        <button class="btn btn-outline">Instalment Plan</button>
+      </div>
+    </div>
+
+    <!-- Settlement Approval -->
+    <div class="card">
+      <div class="card-title">Settlement / Discount Request</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Requested Discount</label>
+          <input class="form-input" value="10%" style="color:var(--sn-amber);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discount Amount</label>
+          <input class="form-input" value="S$ 4,280.00" style="color:var(--sn-amber);font-family:'DM Mono',monospace;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Policy Threshold</label>
+        <div style="padding:8px 12px;border-radius:8px;background:var(--sn-green-dim);border:1px solid rgba(0,212,170,0.3);">
+          <span class="text-sm text-green">✓ 10% ≤ 15% policy limit for Medium risk · Auto-approve eligible</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason</label>
+        <select class="form-select"><option>Customer financial hardship</option></select>
+      </div>
+
+      <!-- Approval Flow -->
+      <div class="card-title" style="margin-top:12px;">Approval Flow</div>
+      <div class="approval-flow">
+        <div class="approval-node">
+          <div class="approval-circle done">✓</div>
+          <div class="approval-label">Agent<br>Submitted</div>
+        </div>
+        <div class="approval-line done"></div>
+        <div class="approval-node">
+          <div class="approval-circle current">⏳</div>
+          <div class="approval-label">Supervisor<br>Rina Patel</div>
+        </div>
+        <div class="approval-line"></div>
+        <div class="approval-node">
+          <div class="approval-circle pending">○</div>
+          <div class="approval-label">Risk Mgr<br>(if > 15%)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary">Submit for Approval</button>
+        <button class="btn btn-danger">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Playbook Steps -->
+  <div class="card">
+    <div class="card-title">Collections Playbook – Bucket 31-60 DPD</div>
+    <div>
+      <div class="playbook-step completed">
+        <div class="step-num">✓</div>
+        <div class="step-body">
+          <div class="step-title">Identity Verification</div>
+          <div class="step-desc">Customer verified via NRIC and date of birth · 25 Mar 2025 08:15</div>
+        </div>
+        <span class="status status-green">Done</span>
+      </div>
+      <div class="playbook-step completed">
+        <div class="step-num">✓</div>
+        <div class="step-body">
+          <div class="step-title">Debt Validation & Disclosure</div>
+          <div class="step-desc">Statutory disclosure read · MAS guidelines complied</div>
+        </div>
+        <span class="status status-green">Done</span>
+      </div>
+      <div class="playbook-step active-step">
+        <div class="step-num" style="background:var(--sn-blue-dim);border-color:var(--sn-blue);color:var(--sn-blue);">3</div>
+        <div class="step-body">
+          <div class="step-title">Payment Arrangement</div>
+          <div class="step-desc">PTP agreed · PayNow · 28 Mar 2025 · Confirm and send receipt</div>
+        </div>
+        <span class="status status-blue">In Progress</span>
+      </div>
+      <div class="playbook-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Payment Monitoring</div>
+          <div class="step-desc">Automated reminder on 27 Mar · Confirm receipt post-28 Mar</div>
+        </div>
+        <span class="status status-amber">Pending</span>
+      </div>
+      <div class="playbook-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Case Closure / Escalation</div>
+          <div class="step-desc">Auto-close if PTP Kept · Escalate to Field if PTP Broken ×2</div>
+        </div>
+        <span class="status status-amber">Pending</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 7: DISPUTE / COMPLAINT                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-7" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Dispute / Complaint</div>
+    <span class="text-muted text-sm">Case: COL-2025-008389 · Ravi Kumar</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">Dispute Details</div>
+        <div class="form-group">
+          <label class="form-label">Dispute Type</label>
+          <select class="form-select"><option>Fees / Charges Dispute</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dispute Description</label>
+          <textarea class="form-input" rows="4">Customer disputes late fee of S$120 charged on Feb 2025. Claims payment was made via internet banking on 14 Feb but not credited until 17 Feb due to bank processing delay. Requesting waiver of fee.</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hold Collections?</label>
+          <div style="padding:8px 12px;border-radius:8px;background:var(--sn-amber-dim);border:1px solid rgba(255,183,77,0.3);">
+            <span class="text-sm text-amber">⚠️ Collections ON HOLD pending dispute resolution</span>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">SLA Target</label>
+            <input class="form-input" value="2 business days" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due By</label>
+            <input class="form-input" value="27 Mar 2025" style="color:var(--sn-amber);" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Resolution</div>
+        <div class="form-group">
+          <label class="form-label">Resolution Type</label>
+          <select class="form-select">
+            <option>Fee Waiver – Approved</option>
+            <option>Fee Waiver – Rejected</option>
+            <option>Under Investigation</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Resolution Notes</label>
+          <textarea class="form-input" rows="3">Verified with payment ops – internet banking payment received 14 Feb, processing delay on bank side. Late fee to be waived as goodwill gesture. Resume collections after waiver applied.</textarea>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary">Resolve Dispute</button>
+          <button class="btn btn-outline">Escalate</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">Parent Case Link</div>
+        <div style="padding:12px;border-radius:8px;background:var(--sn-mid);border:1px solid var(--sn-border);">
+          <div class="text-xs text-muted">Parent Collections Case</div>
+          <div class="bold mt-8">COL-2025-008389 · Ravi Kumar</div>
+          <div class="text-xs text-muted mt-8">Credit Card · 45 DPD · S$15,200</div>
+          <div class="mt-8"><span class="status status-blue">Collections Paused</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Open Disputes – All Cases</div>
+        <table class="data-table">
+          <thead><tr><th>Customer</th><th>Type</th><th>SLA</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="name-cell">Ravi Kumar</td><td>Fee dispute</td><td style="color:var(--sn-amber);">1d left</td><td><span class="status status-blue">Open</span></td></tr>
+            <tr><td class="name-cell">Lim Wei Xian</td><td>Unauthorized txn</td><td style="color:var(--sn-red);">Overdue!</td><td><span class="status status-red">Breached</span></td></tr>
+            <tr><td class="name-cell">Siti Aminah</td><td>Interest error</td><td style="color:var(--sn-green);">3d left</td><td><span class="status status-amber">Pending</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 8: FIELD VISIT                             -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-8" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Field Visit Work Order</div>
+    <span class="text-muted text-sm">WO-2025-00284 · Nur Hadi · 75 DPD</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">Visit Details</div>
+        <div class="form-group">
+          <label class="form-label">Customer</label>
+          <input class="form-input" value="Nur Hadi bin Abdullah" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" value="Blk 482 Jurong West Ave 1, #05-21, Singapore 640482">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Visit Window</label>
+            <input class="form-input" value="28 Mar 2025, 10:00–13:00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Field Agent</label>
+            <input class="form-input" value="Ahmad Faris (Field Team SG)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Visit Purpose</label>
+          <select class="form-select"><option>Verification + Payment Collection</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Outstanding</label>
+          <input class="form-input" value="S$ 218,000.00 (SME Finance · 75 DPD)" style="color:var(--sn-amber);font-family:'DM Mono',monospace;" readonly>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Visit Outcome (Mobile Capture)</div>
+        <div class="form-group">
+          <label class="form-label">Outcome</label>
+          <select class="form-select">
+            <option>Contacted – PTP Agreed</option>
+            <option>Not at home</option>
+            <option>Business closed</option>
+            <option>Partial payment collected</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">GPS Verification</label>
+          <div style="padding:8px 12px;border-radius:8px;background:var(--sn-green-dim);border:1px solid rgba(0,212,170,0.3);">
+            <span class="text-sm text-green">📍 1°21'N 103°42'E · Verified at 10:42 SGT</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Evidence Upload</label>
+          <div style="padding:16px;border:2px dashed var(--sn-border);border-radius:8px;text-align:center;color:var(--sn-muted);font-size:12px;">
+            📎 Upload photo / signature / payment proof
+          </div>
+        </div>
+        <button class="btn btn-primary">Submit Visit Report</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Field Agent Map View</div>
+      <div style="height:260px;background:var(--sn-mid);border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--sn-border);flex-direction:column;gap:8px;">
+        <div style="font-size:32px;">🗺️</div>
+        <div class="text-sm text-muted">Jurong West, Singapore</div>
+        <div class="text-xs text-muted">Field agent: Ahmad Faris · En route</div>
+        <div style="padding:6px 12px;background:var(--sn-green-dim);border-radius:20px;border:1px solid rgba(0,212,170,0.3);">
+          <span class="text-xs text-green">📍 3.2 km away · ~8 min ETA</span>
+        </div>
+      </div>
+      <div class="mt-16">
+        <div class="card-title">Today's Field Schedule</div>
+        <table class="data-table">
+          <thead><tr><th>Time</th><th>Customer</th><th>Address</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="font-mono text-xs">10:00</td><td class="name-cell">Nur Hadi</td><td class="text-xs">Jurong West</td><td><span class="status status-amber">En Route</span></td></tr>
+            <tr><td class="font-mono text-xs">13:00</td><td class="name-cell">Wong Kok Fai</td><td class="text-xs">Toa Payoh</td><td><span class="status status-blue">Scheduled</span></td></tr>
+            <tr><td class="font-mono text-xs">15:30</td><td class="name-cell">Fatimah Zahra</td><td class="text-xs">Tampines</td><td><span class="status status-blue">Scheduled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 9: LEGAL ESCALATION                        -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-9" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Legal Escalation</div>
+    <span class="text-muted text-sm">Case: COL-2025-008210 · Suresh Iyer · 120 DPD · S$67,300</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <div class="card mb-16">
+        <div class="card-title">Legal Stage Progress</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sn-border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--sn-green);"></div>
+              <span class="text-sm">Pre-legal Notice Sent</span>
+            </div>
+            <span class="text-xs text-muted font-mono">10 Mar 2025</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sn-border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--sn-green);"></div>
+              <span class="text-sm">Legal Notice Issued</span>
+            </div>
+            <span class="text-xs text-muted font-mono">20 Mar 2025</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sn-border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--sn-amber);animation:pulse 1.5s infinite;"></div>
+              <span class="text-sm text-amber">Counsel Assigned (In Progress)</span>
+            </div>
+            <span class="text-xs text-muted font-mono">25 Mar 2025</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sn-border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--sn-border);"></div>
+              <span class="text-sm text-muted">Legal Pack Completed</span>
+            </div>
+            <span class="text-xs text-muted font-mono">Pending</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--sn-border);"></div>
+              <span class="text-sm text-muted">Filed in Court</span>
+            </div>
+            <span class="text-xs text-muted font-mono">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">External Counsel</div>
+        <div class="compliance-row"><span class="text-muted">Firm</span><span>Rajah & Tann Singapore</span></div>
+        <div class="compliance-row"><span class="text-muted">Partner</span><span>Mr. K. Shanmugam</span></div>
+        <div class="compliance-row"><span class="text-muted">Reference</span><span class="font-mono text-xs">RT/2025/COL/0842</span></div>
+        <div class="compliance-row"><span class="text-muted">Portal Access</span><span class="text-green">✓ Active</span></div>
+        <button class="btn btn-outline mt-12" style="font-size:12px;">Open External Portal →</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Legal Pack Checklist</div>
+      <div>
+        <div class="checklist-item done">
+          <span class="check-icon">✅</span>
+          <span class="check-text">Original Loan Agreement</span>
+          <span class="check-owner">Uploaded 20 Mar</span>
+        </div>
+        <div class="checklist-item done">
+          <span class="check-icon">✅</span>
+          <span class="check-text">Payment History Statement</span>
+          <span class="check-owner">System generated</span>
+        </div>
+        <div class="checklist-item done">
+          <span class="check-icon">✅</span>
+          <span class="check-text">Demand Letter (Pre-legal)</span>
+          <span class="check-owner">Uploaded 10 Mar</span>
+        </div>
+        <div class="checklist-item done">
+          <span class="check-icon">✅</span>
+          <span class="check-text">Legal Notice Copy</span>
+          <span class="check-owner">Uploaded 20 Mar</span>
+        </div>
+        <div class="checklist-item pending">
+          <span class="check-icon">⏳</span>
+          <span class="check-text">Identity Documents (NRIC)</span>
+          <span class="check-owner" style="color:var(--sn-amber);">Pending</span>
+        </div>
+        <div class="checklist-item pending">
+          <span class="check-icon">⏳</span>
+          <span class="check-text">Counsel Engagement Letter</span>
+          <span class="check-owner" style="color:var(--sn-amber);">Pending</span>
+        </div>
+        <div class="checklist-item" style="border-color:var(--sn-border);">
+          <span class="check-icon">○</span>
+          <span class="check-text">Court Filing Documents</span>
+          <span class="check-owner">Not started</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:10px 14px;border-radius:8px;background:var(--sn-amber-dim);border:1px solid rgba(255,183,77,0.3);">
+        <span class="text-sm text-amber">⚠️ Legal Pack: 4/7 complete · SLA due 29 Mar 2025</span>
+      </div>
+      <div class="mt-12 flex gap-8">
+        <button class="btn btn-primary" style="font-size:12px;">Upload Document</button>
+        <button class="btn btn-outline" style="font-size:12px;">Generate Pack</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SCREEN 10: AUDIT & COMPLIANCE                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-10" style="padding:20px;">
+  <div class="page-header">
+    <div class="page-title">Audit & Compliance</div>
+    <div class="flex gap-8">
+      <span class="filter-pill active">All Markets</span>
+      <span class="filter-pill">SG – MAS</span>
+      <span class="filter-pill">MY – BNM</span>
+      <span class="filter-pill">ID – OJK</span>
+      <span class="filter-pill">TH – BOT</span>
+    </div>
+  </div>
+
+  <!-- Compliance KPIs -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;">
+    <div class="kpi-card green"><div class="kpi-label">Contact Hour Compliance</div><div class="kpi-value green">100%</div><div class="kpi-trend"><span class="trend-good">✓ All markets</span></div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Frequency Limit Breaches</div><div class="kpi-value amber">3</div><div class="kpi-trend"><span class="trend-up">↑ 1 this week</span></div></div>
+    <div class="kpi-card red"><div class="kpi-label">SLA Breaches</div><div class="kpi-value red">7</div><div class="kpi-trend">Dispute SLA overdue</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Disclosure Compliance</div><div class="kpi-value green">99.8%</div><div class="kpi-trend"><span class="trend-good">✓ 4 minor flags</span></div></div>
+  </div>
+
+  <!-- Regulatory Panels -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title">Contact Policy Enforcement – By Market</div>
+      <table class="data-table">
+        <thead><tr><th>Market</th><th>Regulator</th><th>Hours</th><th>Max/Week</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>🇸🇬 SG</td><td class="text-xs text-muted">MAS / CCAS</td><td class="font-mono text-xs">07:00–21:00</td><td class="font-mono">3×</td><td><span class="status status-green">✓ OK</span></td></tr>
+          <tr><td>🇲🇾 MY</td><td class="text-xs text-muted">BNM</td><td class="font-mono text-xs">08:00–21:00</td><td class="font-mono">3×</td><td><span class="status status-green">✓ OK</span></td></tr>
+          <tr><td>🇮🇩 ID</td><td class="text-xs text-muted">OJK</td><td class="font-mono text-xs">08:00–20:00</td><td class="font-mono">3×</td><td><span class="status status-amber">⚠ 1 breach</span></td></tr>
+          <tr><td>🇵🇭 PH</td><td class="text-xs text-muted">BSP</td><td class="font-mono text-xs">08:00–20:00</td><td class="font-mono">3×</td><td><span class="status status-green">✓ OK</span></td></tr>
+          <tr><td>🇹🇭 TH</td><td class="text-xs text-muted">BOT (DCA)</td><td class="font-mono text-xs">08:00–20:00</td><td class="font-mono">1/day</td><td><span class="status status-amber">⚠ 2 breach</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Audit Activity Log (Immutable)</div>
+      <div style="max-height:200px;overflow-y:auto;">
+        <table class="data-table">
+          <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Record</th></tr></thead>
+          <tbody>
+            <tr><td class="font-mono text-xs">25/03 10:42</td><td>c.lim</td><td class="text-xs">Sent WhatsApp</td><td class="text-xs font-mono">COL-008421</td></tr>
+            <tr><td class="font-mono text-xs">25/03 09:15</td><td>c.lim</td><td class="text-xs">Created PTP</td><td class="text-xs font-mono">PTP-00842</td></tr>
+            <tr><td class="font-mono text-xs">25/03 08:15</td><td>system</td><td class="text-xs">Logged inbound call</td><td class="text-xs font-mono">COL-008421</td></tr>
+            <tr><td class="font-mono text-xs">24/03 14:30</td><td>system</td><td class="text-xs">Sent email (auto)</td><td class="text-xs font-mono">COL-008421</td></tr>
+            <tr><td class="font-mono text-xs">24/03 09:00</td><td>r.patel</td><td class="text-xs">Approved settlement</td><td class="text-xs font-mono">SET-00284</td></tr>
+            <tr><td class="font-mono text-xs">23/03 16:12</td><td>system</td><td class="text-xs">Legal stage updated</td><td class="text-xs font-mono">COL-008210</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vulnerable Queue -->
+  <div class="card">
+    <div class="card-title">Vulnerable Customer Queue <span class="nav-badge" style="display:inline-block;">12 cases</span></div>
+    <table class="data-table">
+      <thead><tr><th>Customer</th><th>Flag</th><th>DPD</th><th>Last Supervisor Review</th><th>Collections Status</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="name-cell">Mei Ling</td>
+          <td><span class="status status-red">Vulnerable</span></td>
+          <td><span class="dpd-badge dpd-60">35 DPD</span></td>
+          <td class="text-xs text-muted font-mono">Today</td>
+          <td>Restricted templates only</td>
+          <td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px;">Review</button></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Abdullah Hassan</td>
+          <td><span class="status status-amber">Hardship</span></td>
+          <td><span class="dpd-badge dpd-60">41 DPD</span></td>
+          <td class="text-xs text-muted font-mono">Yesterday</td>
+          <td>Hardship plan active</td>
+          <td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px;">Review</button></td>
+        </tr>
+        <tr>
+          <td class="name-cell">Priya Nair</td>
+          <td><span class="status status-red">Vulnerable</span></td>
+          <td><span class="dpd-badge dpd-60">28 DPD</span></td>
+          <td class="text-xs text-muted font-mono">2 days ago</td>
+          <td>Paused – pending review</td>
+          <td><button class="btn btn-primary" style="font-size:11px;padding:4px 10px;">Review !</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<script>
+// Screen switching
+function showScreen(num, title) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const s = document.getElementById('screen-' + num);
+  if (s) s.classList.add('active');
+
+  // Update tabs
+  const tabs = document.querySelectorAll('.screen-tab');
+  if (tabs[num - 1]) tabs[num - 1].classList.add('active');
+
+  // Update sidebar
+  const navItems = document.querySelectorAll('.nav-item');
+  if (navItems[num - 1]) navItems[num - 1].classList.add('active');
+
+  // Update breadcrumb
+  document.getElementById('breadcrumb-text').textContent = title;
+
+  // Re-trigger animations
+  s.querySelectorAll('.animate-in').forEach((el, i) => {
+    el.style.animation = 'none';
+    setTimeout(() => {
+      el.style.animation = '';
+    }, 10);
+  });
+}
+
+// Tab clicks within forms
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Chip toggles
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    this.closest('.chart-actions').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Filter pills
+document.querySelectorAll('.filter-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    this.closest('.filter-row, div').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Channel buttons
+document.querySelectorAll('.channel-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.closest('.channel-grid').querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Playbook steps
+document.querySelectorAll('.playbook-step').forEach(step => {
+  step.addEventListener('click', function() {
+    if (this.classList.contains('completed')) return;
+  });
+});
+</script>
+</body>
+</html>
